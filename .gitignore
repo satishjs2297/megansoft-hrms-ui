@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+dist/
+tmp/
+out-tsc/
+bazel-out/
+
+# IDE & editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Angular cache
+.angular/
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Misc
+*.log
+*.tgz
+
+# Root-level design reference images (not needed in repo)
+/megansoft-logo.png
+/web-site-themes-for-reference.png

@@ -1,0 +1,44 @@
+.upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 40px;
+  border: 2px dashed #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+  text-align: center;
+
+  .upload-icon { font-size: 3rem; height: 3rem; width: 3rem; color: #94a3b8; }
+  p { color: #64748b; }
+  .file-name { display: flex; align-items: center; gap: 6px; color: #166534; }
+  .file-name mat-icon { color: #166534; }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 16px;
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+.skill-chip {
+  display: inline-block;
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.done-card {
+  text-align: center;
+  padding: 48px;
+
+  .done-icon { font-size: 4rem; height: 4rem; width: 4rem; color: #166534; }
+  h2 { font-size: 1.5rem; font-weight: 700; margin: 16px 0 8px; }
+  p { color: #64748b; }
+}
+
+mat-expansion-panel { margin-bottom: 12px; }

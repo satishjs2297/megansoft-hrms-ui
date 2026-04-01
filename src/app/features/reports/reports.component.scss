@@ -1,0 +1,75 @@
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+  @media (max-width: 768px) { grid-template-columns: 1fr 1fr; }
+}
+
+.toolbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.assessment-table {
+  width: 100%;
+
+  mat-header-cell, mat-cell { padding: 12px 8px; }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px;
+
+  mat-icon { font-size: 3rem; height: 3rem; width: 3rem; color: #94a3b8; }
+  p { color: #64748b; margin-top: 12px; }
+}
+
+.detail-panel {
+  margin-top: 20px;
+
+  .detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    h2 { font-size: 1.2rem; font-weight: 700; }
+  }
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 24px;
+
+  div { display: flex; flex-direction: column; gap: 2px; }
+  .meta-label { font-size: 0.72rem; color: #9ca3af; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+  .meta-value { font-size: 1rem; font-weight: 600; color: #111827; }
+}
+
+.skills-table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .skill-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: #f9fafb;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+}
+
+.observation-box {
+  background: #f9fafb;
+  border-left: 4px solid #1d4ed8;
+  padding: 14px 18px;
+  border-radius: 0 8px 8px 0;
+  color: #374151;
+  line-height: 1.6;
+}

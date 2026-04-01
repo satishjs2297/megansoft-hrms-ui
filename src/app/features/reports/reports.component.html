@@ -1,0 +1,134 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1><mat-icon>bar_chart</mat-icon> Assessment Reports</h1>
+    <p>View, search, and export candidate assessment records</p>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="metrics-row">
+    <div class="metric-card blue">
+      <div class="metric-value">{{summary.total}}</div>
+      <div class="metric-label">Total Assessments</div>
+    </div>
+    <div class="metric-card green">
+      <div class="metric-value">{{summary.selected}}</div>
+      <div class="metric-label">Selected</div>
+    </div>
+    <div class="metric-card red">
+      <div class="metric-value">{{summary.rejected}}</div>
+      <div class="metric-label">Rejected</div>
+    </div>
+    <div class="metric-card amber">
+      <div class="metric-value">{{summary.on_hold}}</div>
+      <div class="metric-label">On Hold</div>
+    </div>
+  </div>
+
+  <!-- Search & Export -->
+  <div class="card" style="margin-bottom: 20px">
+    <div class="toolbar-row">
+      <mat-form-field appearance="outline" style="max-width: 400px">
+        <mat-label>Search by candidate or panel</mat-label>
+        <input matInput [formControl]="searchControl" placeholder="Type to filter...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <button mat-stroked-button (click)="exportAllCsv()">
+        <mat-icon>download</mat-icon> Export All CSV
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="spinner-overlay card">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading assessments...</p>
+  </div>
+
+  <!-- Table -->
+  <div *ngIf="!loading" class="card">
+    <div *ngIf="records.length === 0" class="empty-state">
+      <mat-icon>inbox</mat-icon>
+      <p>No assessments found.</p>
+    </div>
+
+    <mat-table *ngIf="records.length > 0" [dataSource]="records" class="assessment-table">
+      <ng-container matColumnDef="id">
+        <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
+        <mat-cell *matCellDef="let r">{{r.id}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="candidate_name">
+        <mat-header-cell *matHeaderCellDef>Candidate</mat-header-cell>
+        <mat-cell *matCellDef="let r">{{r.candidate_name}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="panel_name">
+        <mat-header-cell *matHeaderCellDef>Panel</mat-header-cell>
+        <mat-cell *matCellDef="let r">{{r.panel_name}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="date_of_interview">
+        <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
+        <mat-cell *matCellDef="let r">{{r.date_of_interview}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="assessment_status">
+        <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+        <mat-cell *matCellDef="let r">
+          <span class="status-badge" [ngClass]="getStatusClass(r.assessment_status)">{{r.assessment_status}}</span>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="created_at">
+        <mat-header-cell *matHeaderCellDef>Submitted</mat-header-cell>
+        <mat-cell *matCellDef="let r">{{r.created_at | date:'dd MMM yyyy'}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let r">
+          <button mat-icon-button (click)="viewRecord(r)" title="View"><mat-icon>visibility</mat-icon></button>
+          <button mat-icon-button color="warn" (click)="deleteRecord(r.id)" title="Delete"><mat-icon>delete</mat-icon></button>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  </div>
+
+  <!-- Detail Panel -->
+  <div *ngIf="selectedRecord" class="card detail-panel">
+    <div class="detail-header">
+      <h2>{{selectedRecord.candidate_name}} &mdash; Assessment Report</h2>
+      <button mat-icon-button (click)="closeDetail()"><mat-icon>close</mat-icon></button>
+    </div>
+    <mat-divider style="margin: 12px 0"></mat-divider>
+
+    <div class="meta-grid">
+      <div><span class="meta-label">Candidate</span><span class="meta-value">{{selectedRecord.candidate_name}}</span></div>
+      <div><span class="meta-label">Panel</span><span class="meta-value">{{selectedRecord.panel_name}}</span></div>
+      <div><span class="meta-label">Date</span><span class="meta-value">{{selectedRecord.date_of_interview}}</span></div>
+      <div><span class="meta-label">Status</span>
+        <span class="status-badge" [ngClass]="getStatusClass(selectedRecord.assessment_status)">{{selectedRecord.assessment_status}}</span>
+      </div>
+    </div>
+
+    <div style="margin-top: 20px">
+      <div class="section-title"><mat-icon>star_rate</mat-icon> Skills Assessment</div>
+      <div class="skills-table">
+        <div *ngFor="let entry of getSkillEntries(selectedRecord.skills_assessment)" class="skill-entry">
+          <span>{{entry[0]}}</span>
+          <span class="rating-badge" [ngClass]="getRatingClass(entry[1])">{{entry[1]}}</span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="selectedRecord.overall_observation" style="margin-top: 20px">
+      <div class="section-title"><mat-icon>notes</mat-icon> Overall Observation</div>
+      <div class="observation-box">{{selectedRecord.overall_observation}}</div>
+    </div>
+
+    <div style="margin-top: 24px; display: flex; gap: 12px">
+      <button mat-stroked-button (click)="exportSingleCsv(selectedRecord.id, selectedRecord.candidate_name)">
+        <mat-icon>table_chart</mat-icon> Export CSV
+      </button>
+      <button mat-raised-button color="primary" (click)="exportPdf(selectedRecord.id, selectedRecord.candidate_name)">
+        <mat-icon>picture_as_pdf</mat-icon> Export PDF
+      </button>
+    </div>
+  </div>
+</div>
