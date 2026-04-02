@@ -26,4 +26,21 @@ export interface AssessmentSummary {
 export interface AssessmentListResponse {
   records: AssessmentRecord[];
   summary: AssessmentSummary;
+  status_counts?: Record<string, number>;
+  pagination?: {
+    pageNo: number;
+    maxRecords: number;
+    totalRecords: number;
+    totalPages: number;
+  };
+}
+
+export interface AssessmentListParams {
+  search?: string;
+  panelName?: string;
+  feedbackStatus?: string;
+  fromDate?: string;
+  toDate?: string;
+  pageNo?: number;
+  maxRecords?: number;
 }

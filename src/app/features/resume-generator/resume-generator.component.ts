@@ -131,9 +131,10 @@ export class ResumeGeneratorComponent implements OnInit {
         worked_with_ford_agency_before: formVal.worked_with_ford_agency_before,
       }
     };
+    const normalizedResume = this.normalizeResumeDates(updatedResume);
     this.loading = true;
     this.loadingMessage = 'Generating resume document...';
-    this.resumeService.generateResume(updatedResume, this.selectedTemplate).subscribe({
+    this.resumeService.generateResume(normalizedResume, this.selectedTemplate).subscribe({
       next: (blob) => {
         this.generatedBlob = blob;
         this.generatedFilename = `${formVal.name.replace(' ', '_')}_resume.docx`;
@@ -169,5 +170,46 @@ export class ResumeGeneratorComponent implements OnInit {
 
   private showError(msg: string) {
     this.snack.open(msg, 'Close', { duration: 5000, panelClass: 'error-snack' });
+  }
+
+  private normalizeResumeDates(resume: StructuredResume): StructuredResume {
+    return {
+      ...resume,
+      contact: {
+        ...resume.contact,
+        interview_availability: this.formatDateValue(resume.contact.interview_availability),
+        start_availability: this.formatDateValue(resume.contact.start_availability),
+      },
+      experience: (resume.experience || []).map(exp => ({
+        ...exp,
+        start_date: this.formatDateValue(exp.start_date),
+        end_date: this.formatDateValue(exp.end_date || ''),
+      })),
+      education: (resume.education || []).map(edu => ({
+        ...edu,
+        graduation_date: this.formatDateValue(edu.graduation_date),
+      })),
+      certifications: (resume.certifications || []).map(cert => ({
+        ...cert,
+        date: this.formatDateValue(cert.date || ''),
+      })),
+    };
+  }
+
+  private formatDateValue(value: unknown): string {
+    if (!value) return '';
+    if (value instanceof Date && !Number.isNaN(value.getTime())) {
+      const day = `${value.getDate()}`.padStart(2, '0');
+      const month = `${value.getMonth() + 1}`.padStart(2, '0');
+      const year = value.getFullYear();
+      return `${day}-${month}-${year}`;
+    }
+    if (typeof value === 'string') {
+      const datePart = value.split('T')[0];
+      const fullMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(datePart);
+      if (fullMatch) return `${fullMatch[3]}-${fullMatch[2]}-${fullMatch[1]}`;
+      return value;
+    }
+    return String(value);
   }
 }
