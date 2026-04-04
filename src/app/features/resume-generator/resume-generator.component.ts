@@ -35,7 +35,12 @@ export class ResumeGeneratorComponent implements OnInit {
   templates: ResumeTemplate[] = [];
   selectedTemplate = '';
   selectedFile: File | null = null;
+  selectedJdFile: File | null = null;
+  selectedPhotoFile: File | null = null;
+  candidatePhotoBase64 = '';
+  jdText = '';
   extractedText = '';
+  extractedJdText = '';
   structuredResume: StructuredResume | null = null;
   loading = false;
   loadingMessage = '';
@@ -63,6 +68,50 @@ export class ResumeGeneratorComponent implements OnInit {
     }
   }
 
+  onJdFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files?.length) {
+      this.selectedJdFile = input.files[0];
+      this.loading = true;
+      this.loadingMessage = 'Extracting text from job description...';
+      this.resumeService.extractText(this.selectedJdFile).subscribe({
+        next: (res) => {
+          this.jdText = res.extracted_text || '';
+          this.loading = false;
+        },
+        error: (e) => {
+          this.loading = false;
+          this.showError('Failed to extract job description: ' + (e.error?.detail || e.message));
+        }
+      });
+    }
+  }
+
+  onJdTextInput(event: Event) {
+    this.jdText = (event.target as HTMLTextAreaElement).value;
+  }
+
+  onPhotoSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+    const file = input.files[0];
+    if (!file.type.startsWith('image/')) {
+      this.showError('Please upload a valid image file (JPG/PNG).');
+      return;
+    }
+    this.selectedPhotoFile = file;
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.candidatePhotoBase64 = String(reader.result || '');
+    };
+    reader.onerror = () => {
+      this.showError('Failed to read candidate photo.');
+      this.selectedPhotoFile = null;
+      this.candidatePhotoBase64 = '';
+    };
+    reader.readAsDataURL(file);
+  }
+
   onProcess() {
     if (!this.selectedFile) return;
     this.loading = true;
@@ -70,18 +119,36 @@ export class ResumeGeneratorComponent implements OnInit {
     this.resumeService.extractText(this.selectedFile).subscribe({
       next: (res) => {
         this.extractedText = res.extracted_text;
-        this.loadingMessage = 'AI is structuring your resume...';
-        this.resumeService.structureResume(this.extractedText).subscribe({
-          next: (resume) => {
-            this.structuredResume = resume;
-            this.buildEditForm(resume);
-            this.loading = false;
-            this.step = 2;
-          },
-          error: (e) => { this.loading = false; this.showError('Failed to structure resume: ' + (e.error?.detail || e.message)); }
-        });
+        if (this.selectedJdFile && !this.jdText.trim()) {
+          this.loadingMessage = 'Extracting text from job description...';
+          this.resumeService.extractText(this.selectedJdFile).subscribe({
+            next: (jdRes) => {
+              const textAreaJd = this.jdText.trim();
+              const fileJd = (jdRes.extracted_text || '').trim();
+              this.extractedJdText = textAreaJd && fileJd ? `${textAreaJd}\n\n${fileJd}` : (textAreaJd || fileJd);
+              this.structureResumeWithContext();
+            },
+            error: (e) => { this.loading = false; this.showError('Failed to extract job description: ' + (e.error?.detail || e.message)); }
+          });
+          return;
+        }
+        this.extractedJdText = this.jdText.trim();
+        this.structureResumeWithContext();
       },
       error: (e) => { this.loading = false; this.showError('Failed to extract text: ' + (e.error?.detail || e.message)); }
+    });
+  }
+
+  private structureResumeWithContext() {
+    this.loadingMessage = 'AI is structuring your resume...';
+    this.resumeService.structureResume(this.extractedText, this.extractedJdText).subscribe({
+      next: (resume) => {
+        this.structuredResume = resume;
+        this.buildEditForm(resume);
+        this.loading = false;
+        this.step = 2;
+      },
+      error: (e) => { this.loading = false; this.showError('Failed to structure resume: ' + (e.error?.detail || e.message)); }
     });
   }
 
@@ -113,6 +180,7 @@ export class ResumeGeneratorComponent implements OnInit {
       ...this.structuredResume,
       designation: formVal.designation,
       summary: formVal.summary,
+      candidate_photo_base64: this.candidatePhotoBase64 || undefined,
       contact: {
         ...this.structuredResume.contact,
         name: formVal.name,
@@ -162,7 +230,12 @@ export class ResumeGeneratorComponent implements OnInit {
   reset() {
     this.step = 0;
     this.selectedFile = null;
+    this.selectedJdFile = null;
+    this.selectedPhotoFile = null;
+    this.candidatePhotoBase64 = '';
+    this.jdText = '';
     this.extractedText = '';
+    this.extractedJdText = '';
     this.structuredResume = null;
     this.generatedBlob = null;
     this.generatedFilename = '';

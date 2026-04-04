@@ -70,12 +70,14 @@ export interface StructuredResume {
   designation?: string;
   summary?: string;
   career_summary: string[];
+  relevant_skills: string[];
   experience: Experience[];
   education: Education[];
   skills: Skill[];
   projects: Project[];
   certifications: Certification[];
   languages: Language[];
+  candidate_photo_base64?: string;
   additional_info?: Record<string, any>;
 }
 

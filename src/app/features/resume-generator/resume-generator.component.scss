@@ -15,6 +15,13 @@
   .file-name mat-icon { color: #166534; }
 }
 
+.upload-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
