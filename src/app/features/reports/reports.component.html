@@ -155,17 +155,21 @@
     <mat-divider style="margin: 12px 0"></mat-divider>
 
     <div class="meta-grid">
-      <div><span class="meta-label">Candidate</span><span class="meta-value">{{selectedRecord.candidate_name}}</span></div>
-      <div><span class="meta-label">Panel</span><span class="meta-value">{{selectedRecord.panel_name}}</span></div>
-      <div><span class="meta-label">Date</span><span class="meta-value">{{formatDisplayDate(selectedRecord.date_of_interview)}}</span></div>
-      <div><span class="meta-label">Status</span>
+      <div class="meta-item"><span class="meta-label">Candidate</span><span class="meta-value">{{selectedRecord.candidate_name}}</span></div>
+      <div class="meta-item"><span class="meta-label">Panel</span><span class="meta-value">{{selectedRecord.panel_name}}</span></div>
+      <div class="meta-item"><span class="meta-label">Date</span><span class="meta-value">{{formatDisplayDate(selectedRecord.date_of_interview)}}</span></div>
+      <div class="meta-item"><span class="meta-label">Status</span>
         <span class="status-badge" [ngClass]="getStatusClass(selectedRecord.assessment_status)">{{selectedRecord.assessment_status}}</span>
       </div>
     </div>
 
-    <div style="margin-top: 20px">
+    <div class="detail-section">
       <div class="section-title"><mat-icon>star_rate</mat-icon> Skills Assessment</div>
       <div class="skills-table">
+        <div class="skills-head">
+          <span>Skill</span>
+          <span>Rating</span>
+        </div>
         <div *ngFor="let entry of getSkillEntries(selectedRecord.skills_assessment)" class="skill-entry">
           <span>{{entry[0]}}</span>
           <span class="rating-badge" [ngClass]="getRatingClass(entry[1])">{{entry[1]}}</span>
@@ -173,12 +177,12 @@
       </div>
     </div>
 
-    <div *ngIf="selectedRecord.overall_observation" style="margin-top: 20px">
+    <div *ngIf="selectedRecord.overall_observation" class="detail-section">
       <div class="section-title"><mat-icon>notes</mat-icon> Overall Observation</div>
       <div class="observation-box">{{selectedRecord.overall_observation}}</div>
     </div>
 
-    <div style="margin-top: 24px; display: flex; gap: 12px">
+    <div class="detail-actions">
       <button mat-stroked-button (click)="exportSingleCsv(selectedRecord.id, selectedRecord.candidate_name)">
         <mat-icon>table_chart</mat-icon> Export CSV
       </button>
