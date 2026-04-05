@@ -5,7 +5,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from './core/auth/auth.service';
 import { filter } from 'rxjs/operators';
 
-interface NavItem { label: string; icon: string; route?: string; disabled?: boolean; }
+interface NavItem { label: string; icon: string; route?: string; disabled?: boolean; permission?: string; }
 interface NavGroup { groupLabel: string; items: NavItem[]; }
 
 @Component({
@@ -32,9 +32,9 @@ export class AppComponent implements OnInit, OnDestroy {
     {
       groupLabel: 'Talent Acquisition',
       items: [
-        { label: 'Resume Builder',       icon: 'description',       route: '/resume' },
-        { label: 'Candidate Assessment', icon: 'assignment_ind',    route: '/assessment' },
-        { label: 'Assessment Reports',   icon: 'bar_chart',         route: '/reports' },
+        { label: 'Resume Builder',       icon: 'description',       route: '/resume', permission: 'app:full_access' },
+        { label: 'Candidate Assessment', icon: 'assignment_ind',    route: '/assessment', permission: 'assessment:write' },
+        { label: 'Assessment Reports',   icon: 'bar_chart',         route: '/reports', permission: 'app:full_access' },
       ]
     },
     {
@@ -81,6 +81,7 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.checkBreakpoint();
     if (!this.authService.isLoggedIn()) this.router.navigate(['/login']);
+    else if (this.router.url === '/' || this.router.url === '') this.router.navigate([this.authService.getDefaultRoute()]);
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe(() => { this.updateBreadcrumb(); if (this.isMobile) this.mobileOpen = false; });
@@ -122,6 +123,19 @@ export class AppComponent implements OnInit, OnDestroy {
 
   get username(): string {
     return this.authService.getUsername() || 'User';
+  }
+
+  get roleLabel(): string {
+    const role = this.authService.getRole() || '';
+    if (role === 'admin') return 'Administrator';
+    if (role === 'candidate_assessment') return 'Candidate Assessment Panel';
+    return 'User';
+  }
+
+  isNavItemVisible(item: NavItem): boolean {
+    if (item.disabled) return true;
+    if (!item.permission) return true;
+    return this.authService.hasPermission(item.permission);
   }
 
   /** CSS classes on the sidebar */
