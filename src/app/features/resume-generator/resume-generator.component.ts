@@ -250,8 +250,8 @@ export class ResumeGeneratorComponent implements OnInit {
       ...resume,
       contact: {
         ...resume.contact,
-        interview_availability: this.formatDateValue(resume.contact.interview_availability),
-        start_availability: this.formatDateValue(resume.contact.start_availability),
+        interview_availability: this.formatDateValue(resume.contact.interview_availability, '/'),
+        start_availability: this.formatDateValue(resume.contact.start_availability, '/'),
       },
       experience: (resume.experience || []).map(exp => ({
         ...exp,
@@ -269,18 +269,18 @@ export class ResumeGeneratorComponent implements OnInit {
     };
   }
 
-  private formatDateValue(value: unknown): string {
+  private formatDateValue(value: unknown, delimiter: '-' | '/' = '-'): string {
     if (!value) return '';
     if (value instanceof Date && !Number.isNaN(value.getTime())) {
       const day = `${value.getDate()}`.padStart(2, '0');
       const month = `${value.getMonth() + 1}`.padStart(2, '0');
       const year = value.getFullYear();
-      return `${day}-${month}-${year}`;
+      return `${day}${delimiter}${month}${delimiter}${year}`;
     }
     if (typeof value === 'string') {
       const datePart = value.split('T')[0];
       const fullMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(datePart);
-      if (fullMatch) return `${fullMatch[3]}-${fullMatch[2]}-${fullMatch[1]}`;
+      if (fullMatch) return `${fullMatch[3]}${delimiter}${fullMatch[2]}${delimiter}${fullMatch[1]}`;
       return value;
     }
     return String(value);
