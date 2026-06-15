@@ -120,6 +120,14 @@
 
       </header>
 
+      <div *ngIf="apiLoading.loading()" class="api-progress" role="status" aria-live="polite">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <div class="api-progress-label">
+          <mat-spinner diameter="18"></mat-spinner>
+          <span>Processing request...</span>
+        </div>
+      </div>
+
       <!-- Page Content -->
       <main class="page-content">
         <router-outlet />

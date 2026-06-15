@@ -1,8 +1,11 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from './core/auth/auth.service';
+import { ApiLoadingService } from './core/services/api-loading.service';
 import { filter } from 'rxjs/operators';
 
 interface NavItem { label: string; icon: string; route?: string; disabled?: boolean; permission?: string; }
@@ -11,7 +14,7 @@ interface NavGroup { groupLabel: string; items: NavItem[]; }
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, MatTooltipModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, MatTooltipModule, MatProgressBarModule, MatProgressSpinnerModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
@@ -76,7 +79,7 @@ export class AppComponent implements OnInit, OnDestroy {
     },
   ];
 
-  constructor(public authService: AuthService, private router: Router) {}
+  constructor(public authService: AuthService, public apiLoading: ApiLoadingService, private router: Router) {}
 
   ngOnInit() {
     this.checkBreakpoint();
