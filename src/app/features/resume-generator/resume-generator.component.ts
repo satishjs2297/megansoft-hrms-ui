@@ -19,16 +19,15 @@ import { ResumeService } from '../../core/services/resume.service';
 import { StructuredResume, ResumeTemplate } from '../../core/models/resume.model';
 
 @Component({
-  selector: 'app-resume-generator',
-  standalone: true,
-  imports: [
-    CommonModule, ReactiveFormsModule, MatStepperModule, MatButtonModule, MatIconModule,
-    MatFormFieldModule, MatInputModule, MatSelectModule, MatCardModule, MatProgressSpinnerModule,
-    MatSnackBarModule, MatDividerModule, MatChipsModule, MatExpansionModule,
-    MatDatepickerModule, MatNativeDateModule
-  ],
-  templateUrl: './resume-generator.component.html',
-  styleUrls: ['./resume-generator.component.scss']
+    selector: 'app-resume-generator',
+    imports: [
+        CommonModule, ReactiveFormsModule, MatStepperModule, MatButtonModule, MatIconModule,
+        MatFormFieldModule, MatInputModule, MatSelectModule, MatCardModule, MatProgressSpinnerModule,
+        MatSnackBarModule, MatDividerModule, MatChipsModule, MatExpansionModule,
+        MatDatepickerModule, MatNativeDateModule
+    ],
+    templateUrl: './resume-generator.component.html',
+    styleUrls: ['./resume-generator.component.scss']
 })
 export class ResumeGeneratorComponent implements OnInit {
   step = 0; // 0=upload, 1=processing, 2=review, 3=done

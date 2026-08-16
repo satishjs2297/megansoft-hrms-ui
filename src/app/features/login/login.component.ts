@@ -10,12 +10,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
-  selector: 'app-login',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule,
-    MatFormFieldModule, MatInputModule, MatButtonModule,
-    MatIconModule, MatProgressSpinnerModule],
-  template: `
+    selector: 'app-login',
+    imports: [CommonModule, ReactiveFormsModule,
+        MatFormFieldModule, MatInputModule, MatButtonModule,
+        MatIconModule, MatProgressSpinnerModule],
+    template: `
 <div class="lp">
 
   <!-- ── Left: Brand Panel ── -->
@@ -127,7 +126,7 @@ import { AuthService } from '../../core/auth/auth.service';
 
 </div>
   `,
-  styles: [`
+    styles: [`
 /* ── Page container ── */
 .lp {
   min-height: 100vh;

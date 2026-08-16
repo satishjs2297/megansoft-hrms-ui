@@ -21,11 +21,10 @@ import { ReportService } from '../../core/services/report.service';
 import { AssessmentListParams, AssessmentRecord, AssessmentSummary } from '../../core/models/assessment.model';
 
 @Component({
-  selector: 'app-reports',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, MatTableModule, MatProgressSpinnerModule, MatSnackBarModule, MatDividerModule, MatDialogModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule],
-  templateUrl: './reports.component.html',
-  styleUrls: ['./reports.component.scss']
+    selector: 'app-reports',
+    imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, MatTableModule, MatProgressSpinnerModule, MatSnackBarModule, MatDividerModule, MatDialogModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule],
+    templateUrl: './reports.component.html',
+    styleUrls: ['./reports.component.scss']
 })
 export class ReportsComponent implements OnInit {
   @ViewChild('chartDialog') chartDialog!: TemplateRef<unknown>;

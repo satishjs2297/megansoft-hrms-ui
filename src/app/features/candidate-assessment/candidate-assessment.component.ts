@@ -18,11 +18,10 @@ import { ResumeService } from '../../core/services/resume.service';
 import { AssessmentCreate, AssessmentStatus, SkillRating } from '../../core/models/assessment.model';
 
 @Component({
-  selector: 'app-candidate-assessment',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatRadioModule, MatDividerModule, MatProgressSpinnerModule, MatSnackBarModule, MatDatepickerModule, MatNativeDateModule],
-  templateUrl: './candidate-assessment.component.html',
-  styleUrls: ['./candidate-assessment.component.scss']
+    selector: 'app-candidate-assessment',
+    imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatRadioModule, MatDividerModule, MatProgressSpinnerModule, MatSnackBarModule, MatDatepickerModule, MatNativeDateModule],
+    templateUrl: './candidate-assessment.component.html',
+    styleUrls: ['./candidate-assessment.component.scss']
 })
 export class CandidateAssessmentComponent {
   jdFile: File | null = null;
