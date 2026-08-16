@@ -571,8 +571,8 @@ button { font-family: inherit; }
 .mat-mdc-form-field { width: 100%; }
 
 /* Snackbars */
-snack-bar-container.success-snack { --mdc-snackbar-container-color: #166534; }
-snack-bar-container.error-snack   { --mdc-snackbar-container-color: #dc2626; }
+snack-bar-container.success-snack { --mat-snackbar-container-color: #166534; }
+snack-bar-container.error-snack   { --mat-snackbar-container-color: #dc2626; }
 
 /* ═══════════════════════════════════════════════════
    RESPONSIVE BREAKPOINTS
