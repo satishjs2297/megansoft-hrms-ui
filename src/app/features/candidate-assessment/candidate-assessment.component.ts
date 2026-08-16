@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -21,6 +21,7 @@ import { AssessmentCreate, AssessmentStatus, SkillRating } from '../../core/mode
     selector: 'app-candidate-assessment',
     imports: [ReactiveFormsModule, MatCardModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatRadioModule, MatDividerModule, MatProgressSpinnerModule, MatSnackBarModule, MatDatepickerModule, MatNativeDateModule],
     templateUrl: './candidate-assessment.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./candidate-assessment.component.scss']
 })
 export class CandidateAssessmentComponent {

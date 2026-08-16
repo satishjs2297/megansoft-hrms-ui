@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ElementRef, TemplateRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
@@ -24,6 +24,7 @@ import { AssessmentListParams, AssessmentRecord, AssessmentSummary } from '../..
     selector: 'app-reports',
     imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, MatTableModule, MatProgressSpinnerModule, MatSnackBarModule, MatDividerModule, MatDialogModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule],
     templateUrl: './reports.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./reports.component.scss']
 })
 export class ReportsComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -38,6 +38,7 @@ import { StructuredResume, ResumeTemplate } from '../../core/models/resume.model
     MatNativeDateModule
 ],
     templateUrl: './resume-generator.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./resume-generator.component.scss']
 })
 export class ResumeGeneratorComponent implements OnInit {

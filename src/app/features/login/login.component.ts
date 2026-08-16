@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -130,6 +130,7 @@ import { AuthService } from '../../core/auth/auth.service';
 
     </div>
 `,
+    changeDetection: ChangeDetectionStrategy.Eager,
     styles: [`
 /* ── Page container ── */
 .lp {
