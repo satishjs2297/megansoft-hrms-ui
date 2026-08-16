@@ -1,10 +1,10 @@
 # ── Stage 1: Build ────────────────────────────────────────────────────────────
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json package-lock.json* ./
-RUN npm ci --legacy-peer-deps
+COPY package*.json ./
+RUN npm ci
 
 COPY . .
 RUN npm run build -- --configuration production
@@ -16,14 +16,14 @@ FROM nginx:1.27-alpine
 RUN apk add --no-cache gettext
 
 # Remove default nginx config
-RUN rm /etc/nginx/conf.d/default.conf
+RUN rm -f /etc/nginx/conf.d/default.conf
 
 # Copy nginx config template and entrypoint
 COPY nginx.conf.template /etc/nginx/templates/nginx.conf.template
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
-# Copy built Angular app (Angular 17 esbuild output goes to browser/ subdirectory)
+# Angular 22 output is generated under the dist/<app>/browser folder
 COPY --from=builder /app/dist/megansoft-hrms-ui/browser /usr/share/nginx/html
 
 EXPOSE 8080
