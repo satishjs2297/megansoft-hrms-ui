@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,7 +19,7 @@ import { AssessmentCreate, AssessmentStatus, SkillRating } from '../../core/mode
 
 @Component({
     selector: 'app-candidate-assessment',
-    imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatRadioModule, MatDividerModule, MatProgressSpinnerModule, MatSnackBarModule, MatDatepickerModule, MatNativeDateModule],
+    imports: [ReactiveFormsModule, MatCardModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatRadioModule, MatDividerModule, MatProgressSpinnerModule, MatSnackBarModule, MatDatepickerModule, MatNativeDateModule],
     templateUrl: './candidate-assessment.component.html',
     styleUrls: ['./candidate-assessment.component.scss']
 })
