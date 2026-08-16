@@ -7,11 +7,11 @@
 @if (authService.isLoggedIn()) {
   <!-- Mobile backdrop -->
   <div class="sidebar-backdrop"
-    [class.visible]="isMobile && mobileOpen"
+    [class.visible]="isMobile() && mobileOpen()"
   (click)="closeMobileMenu()"></div>
   <div class="app-shell">
     <!-- ══════════════ SIDEBAR ══════════════ -->
-    <aside class="sidebar" [ngClass]="sidebarClasses">
+    <aside class="sidebar" [ngClass]="sidebarClasses()">
       <!-- Header: logo + toggle -->
       <div class="sidebar-header">
         <div class="sb-logo-wrap">
@@ -20,8 +20,8 @@
           </div>
           <span class="logo-sub">HRMS</span>
         </div>
-        <button class="sb-toggle" (click)="toggleSidebar()" [title]="toggleIcon">
-          <span class="material-icons" style="font-size:1.1rem">{{ toggleIcon }}</span>
+        <button class="sb-toggle" (click)="toggleSidebar()" [title]="toggleIcon()">
+          <span class="material-icons" style="font-size:1.1rem">{{ toggleIcon() }}</span>
         </button>
       </div>
       <!-- Navigation -->
@@ -36,7 +36,7 @@
                   class="sb-item"
                   [routerLink]="item.route"
                   routerLinkActive="sb-active"
-                  [matTooltip]="sidebarCollapsed && !isMobile ? item.label : ''"
+                  [matTooltip]="sidebarCollapsed() && !isMobile() ? item.label : ''"
                   matTooltipPosition="right">
                   <span class="sb-icon material-icons">{{ item.icon }}</span>
                   <span class="sb-label">{{ item.label }}</span>
@@ -45,7 +45,7 @@
               <!-- Disabled / coming soon -->
               @if (item.disabled && isNavItemVisible(item)) {
                 <div class="sb-item sb-disabled"
-                  [matTooltip]="sidebarCollapsed && !isMobile ? item.label + ' (Coming Soon)' : ''"
+                  [matTooltip]="sidebarCollapsed() && !isMobile() ? item.label + ' (Coming Soon)' : ''"
                   matTooltipPosition="right">
                   <span class="sb-icon material-icons">{{ item.icon }}</span>
                   <span class="sb-label">{{ item.label }}</span>
@@ -59,7 +59,7 @@
       <!-- User / logout -->
       <div class="sb-footer">
         <div class="sb-user" (click)="logout()"
-          [matTooltip]="sidebarCollapsed && !isMobile ? 'Sign out (' + username + ')' : ''"
+          [matTooltip]="sidebarCollapsed() && !isMobile() ? 'Sign out (' + username + ')' : ''"
           matTooltipPosition="right">
           <div class="sb-avatar">{{ userInitials }}</div>
           <div class="sb-user-info">
@@ -72,12 +72,12 @@
     </aside>
     <!-- /sidebar -->
     <!-- ══════════════ MAIN WRAPPER ══════════════ -->
-    <div class="main-wrapper" [ngClass]="mainWrapperClasses">
+    <div class="main-wrapper" [ngClass]="mainWrapperClasses()">
       <!-- Top Header -->
       <header class="top-header">
         <!-- Mobile: hamburger -->
         <button class="header-hamburger" (click)="toggleSidebar()">
-          <span class="material-icons">{{ mobileOpen ? 'close' : 'menu' }}</span>
+          <span class="material-icons">{{ mobileOpen() ? 'close' : 'menu' }}</span>
         </button>
         <!-- Mobile: logo -->
         <div class="header-logo-mobile">
@@ -88,9 +88,9 @@
           <span class="bc-icon material-icons">corporate_fare</span>
           <span>MeganSoft HRMS</span>
           <span class="bc-sep material-icons">chevron_right</span>
-          <span>{{ currentSection }}</span>
+          <span>{{ currentSection() }}</span>
           <span class="bc-sep material-icons">chevron_right</span>
-          <span class="bc-current">{{ currentPageTitle }}</span>
+          <span class="bc-current">{{ currentPageTitle() }}</span>
         </nav>
         <!-- Actions -->
         <div class="header-actions">
