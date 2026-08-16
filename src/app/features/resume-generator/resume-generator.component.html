@@ -5,207 +5,224 @@
   </div>
 
   <!-- Loading Overlay -->
-  <div *ngIf="loading" class="spinner-overlay card">
-    <mat-spinner diameter="48"></mat-spinner>
-    <p>{{loadingMessage}}</p>
-  </div>
+  @if (loading) {
+    <div class="spinner-overlay card">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>{{loadingMessage}}</p>
+    </div>
+  }
 
-  <ng-container *ngIf="!loading">
-
+  @if (!loading) {
     <!-- Step 0: Upload -->
-    <div *ngIf="step === 0" class="card">
-      <div class="section-title"><mat-icon>upload_file</mat-icon> Step 1: Upload Resume</div>
-      <div class="upload-area">
-        <mat-icon class="upload-icon">cloud_upload</mat-icon>
-        <p>Upload candidate resume (PDF, DOCX, DOC)</p>
-        <label class="upload-label">
-          <input type="file" accept=".pdf,.docx,.doc" (change)="onFileSelected($event)" hidden>
-          <button mat-stroked-button color="primary" type="button" onclick="this.previousElementSibling.click()">
-            <mat-icon>attach_file</mat-icon> Choose File
-          </button>
-        </label>
-        <p *ngIf="selectedFile" class="file-name"><mat-icon>check_circle</mat-icon> {{selectedFile.name}}</p>
-      </div>
-      <div class="section-title" style="margin-top: 16px"><mat-icon>article</mat-icon> Optional: Job Description</div>
-      <mat-form-field appearance="outline" style="width: 100%">
-        <mat-label>Job Description</mat-label>
-        <textarea matInput rows="6" placeholder="Paste or type the job description here..."
+    @if (step === 0) {
+      <div class="card">
+        <div class="section-title"><mat-icon>upload_file</mat-icon> Step 1: Upload Resume</div>
+        <div class="upload-area">
+          <mat-icon class="upload-icon">cloud_upload</mat-icon>
+          <p>Upload candidate resume (PDF, DOCX, DOC)</p>
+          <label class="upload-label">
+            <input type="file" accept=".pdf,.docx,.doc" (change)="onFileSelected($event)" hidden>
+            <button mat-stroked-button color="primary" type="button" onclick="this.previousElementSibling.click()">
+              <mat-icon>attach_file</mat-icon> Choose File
+            </button>
+          </label>
+          @if (selectedFile) {
+            <p class="file-name"><mat-icon>check_circle</mat-icon> {{selectedFile.name}}</p>
+          }
+        </div>
+        <div class="section-title" style="margin-top: 16px"><mat-icon>article</mat-icon> Optional: Job Description</div>
+        <mat-form-field appearance="outline" style="width: 100%">
+          <mat-label>Job Description</mat-label>
+          <textarea matInput rows="6" placeholder="Paste or type the job description here..."
           [value]="jdText" (input)="onJdTextInput($event)"></textarea>
-      </mat-form-field>
-      <div class="upload-row" style="margin-top: 8px">
-        <label class="upload-label">
-          <input type="file" accept=".txt,.pdf,.docx,.doc" (change)="onJdFileSelected($event)" hidden>
-          <button mat-stroked-button color="primary" type="button" onclick="this.previousElementSibling.click()">
-            <mat-icon>attach_file</mat-icon> Upload JD (Optional)
+        </mat-form-field>
+        <div class="upload-row" style="margin-top: 8px">
+          <label class="upload-label">
+            <input type="file" accept=".txt,.pdf,.docx,.doc" (change)="onJdFileSelected($event)" hidden>
+            <button mat-stroked-button color="primary" type="button" onclick="this.previousElementSibling.click()">
+              <mat-icon>attach_file</mat-icon> Upload JD (Optional)
+            </button>
+          </label>
+          @if (selectedJdFile) {
+            <span class="file-name"><mat-icon>check_circle</mat-icon> {{selectedJdFile.name}}</span>
+          }
+        </div>
+        <div class="section-title" style="margin-top: 16px"><mat-icon>photo_camera</mat-icon> Optional: Candidate Photo</div>
+        <div class="upload-row" style="margin-top: 8px">
+          <label class="upload-label">
+            <input type="file" accept=".jpg,.jpeg,.png,.webp" (change)="onPhotoSelected($event)" hidden>
+            <button mat-stroked-button color="primary" type="button" onclick="this.previousElementSibling.click()">
+              <mat-icon>attach_file</mat-icon> Upload Photo
+            </button>
+          </label>
+          @if (selectedPhotoFile) {
+            <span class="file-name"><mat-icon>check_circle</mat-icon> {{selectedPhotoFile.name}}</span>
+          }
+        </div>
+        <mat-divider style="margin: 20px 0"></mat-divider>
+        <div class="section-title"><mat-icon>article</mat-icon> Step 2: Select Template</div>
+        <mat-form-field appearance="outline" style="max-width: 400px">
+          <mat-label>Resume Template</mat-label>
+          <mat-select [(value)]="selectedTemplate">
+            @for (t of templates; track t) {
+              <mat-option [value]="t.id">{{t.name}}</mat-option>
+            }
+            @if (!templates.length) {
+              <mat-option value="">No templates available</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <div style="margin-top: 24px">
+          <button mat-raised-button color="primary" [disabled]="!selectedFile" (click)="onProcess()" style="height:48px; font-size:1rem; padding: 0 32px">
+            <mat-icon>auto_awesome</mat-icon> Extract &amp; Structure Resume
           </button>
-        </label>
-        <span *ngIf="selectedJdFile" class="file-name"><mat-icon>check_circle</mat-icon> {{selectedJdFile.name}}</span>
+        </div>
       </div>
-      <div class="section-title" style="margin-top: 16px"><mat-icon>photo_camera</mat-icon> Optional: Candidate Photo</div>
-      <div class="upload-row" style="margin-top: 8px">
-        <label class="upload-label">
-          <input type="file" accept=".jpg,.jpeg,.png,.webp" (change)="onPhotoSelected($event)" hidden>
-          <button mat-stroked-button color="primary" type="button" onclick="this.previousElementSibling.click()">
-            <mat-icon>attach_file</mat-icon> Upload Photo
-          </button>
-        </label>
-        <span *ngIf="selectedPhotoFile" class="file-name"><mat-icon>check_circle</mat-icon> {{selectedPhotoFile.name}}</span>
-      </div>
-
-      <mat-divider style="margin: 20px 0"></mat-divider>
-
-      <div class="section-title"><mat-icon>article</mat-icon> Step 2: Select Template</div>
-      <mat-form-field appearance="outline" style="max-width: 400px">
-        <mat-label>Resume Template</mat-label>
-        <mat-select [(value)]="selectedTemplate">
-          <mat-option *ngFor="let t of templates" [value]="t.id">{{t.name}}</mat-option>
-          <mat-option value="" *ngIf="!templates.length">No templates available</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <div style="margin-top: 24px">
-        <button mat-raised-button color="primary" [disabled]="!selectedFile" (click)="onProcess()" style="height:48px; font-size:1rem; padding: 0 32px">
-          <mat-icon>auto_awesome</mat-icon> Extract &amp; Structure Resume
-        </button>
-      </div>
-    </div>
-
+    }
     <!-- Step 2: Review & Edit -->
-    <div *ngIf="step === 2 && editForm" class="card">
-      <div class="section-title"><mat-icon>edit_note</mat-icon> Step 3: Review &amp; Edit</div>
-      <p style="color:#64748b; margin-bottom:20px">Review and complete the extracted information before generating the resume.</p>
-
-      <form [formGroup]="editForm">
-        <mat-expansion-panel expanded>
-          <mat-expansion-panel-header>
-            <mat-panel-title><mat-icon>person</mat-icon>&nbsp; Contact Information</mat-panel-title>
-          </mat-expansion-panel-header>
-          <div class="form-grid">
+    @if (step === 2 && editForm) {
+      <div class="card">
+        <div class="section-title"><mat-icon>edit_note</mat-icon> Step 3: Review &amp; Edit</div>
+        <p style="color:#64748b; margin-bottom:20px">Review and complete the extracted information before generating the resume.</p>
+        <form [formGroup]="editForm">
+          <mat-expansion-panel expanded>
+            <mat-expansion-panel-header>
+              <mat-panel-title><mat-icon>person</mat-icon>&nbsp; Contact Information</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="form-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Full Name</mat-label>
+                <input matInput formControlName="name">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Phone</mat-label>
+                <input matInput formControlName="phone">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Location</mat-label>
+                <input matInput formControlName="location">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>LinkedIn</mat-label>
+                <input matInput formControlName="linkedin">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Notice Period</mat-label>
+                <input matInput formControlName="notice_period">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Candidate Type</mat-label>
+                <mat-select formControlName="candidate_type">
+                  <mat-option value="External">External</mat-option>
+                  <mat-option value="Internal">Internal</mat-option>
+                  <mat-option value="Contractor">Contractor</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Interview Availability</mat-label>
+                <input matInput [matDatepicker]="interviewPicker" formControlName="interview_availability">
+                <mat-datepicker-toggle matIconSuffix [for]="interviewPicker"></mat-datepicker-toggle>
+                <mat-datepicker #interviewPicker></mat-datepicker>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Start Availability</mat-label>
+                <input matInput [matDatepicker]="startPicker" formControlName="start_availability">
+                <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+                <mat-datepicker #startPicker></mat-datepicker>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Total Experience (years)</mat-label>
+                <input matInput formControlName="total_experience_years">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Relevant Experience (years)</mat-label>
+                <input matInput formControlName="relevant_experience_years">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>HackerRank Score</mat-label>
+                <input matInput formControlName="hacker_rank_score">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Worked with Ford Before?</mat-label>
+                <mat-select formControlName="worked_with_ford_before">
+                  <mat-option value="Yes">Yes</mat-option>
+                  <mat-option value="No">No</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Worked with Ford Agency Before?</mat-label>
+                <mat-select formControlName="worked_with_ford_agency_before">
+                  <mat-option value="Yes">Yes</mat-option>
+                  <mat-option value="No">No</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </mat-expansion-panel>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title><mat-icon>work</mat-icon>&nbsp; Professional Details</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="form-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Designation</mat-label>
+                <input matInput formControlName="designation">
+              </mat-form-field>
+            </div>
             <mat-form-field appearance="outline">
-              <mat-label>Full Name</mat-label>
-              <input matInput formControlName="name">
+              <mat-label>Summary</mat-label>
+              <textarea matInput formControlName="summary" rows="4"></textarea>
             </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Email</mat-label>
-              <input matInput formControlName="email">
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Phone</mat-label>
-              <input matInput formControlName="phone">
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Location</mat-label>
-              <input matInput formControlName="location">
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>LinkedIn</mat-label>
-              <input matInput formControlName="linkedin">
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Notice Period</mat-label>
-              <input matInput formControlName="notice_period">
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Candidate Type</mat-label>
-              <mat-select formControlName="candidate_type">
-                <mat-option value="External">External</mat-option>
-                <mat-option value="Internal">Internal</mat-option>
-                <mat-option value="Contractor">Contractor</mat-option>
-              </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Interview Availability</mat-label>
-              <input matInput [matDatepicker]="interviewPicker" formControlName="interview_availability">
-              <mat-datepicker-toggle matIconSuffix [for]="interviewPicker"></mat-datepicker-toggle>
-              <mat-datepicker #interviewPicker></mat-datepicker>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Start Availability</mat-label>
-              <input matInput [matDatepicker]="startPicker" formControlName="start_availability">
-              <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
-              <mat-datepicker #startPicker></mat-datepicker>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Total Experience (years)</mat-label>
-              <input matInput formControlName="total_experience_years">
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Relevant Experience (years)</mat-label>
-              <input matInput formControlName="relevant_experience_years">
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>HackerRank Score</mat-label>
-              <input matInput formControlName="hacker_rank_score">
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Worked with Ford Before?</mat-label>
-              <mat-select formControlName="worked_with_ford_before">
-                <mat-option value="Yes">Yes</mat-option>
-                <mat-option value="No">No</mat-option>
-              </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Worked with Ford Agency Before?</mat-label>
-              <mat-select formControlName="worked_with_ford_agency_before">
-                <mat-option value="Yes">Yes</mat-option>
-                <mat-option value="No">No</mat-option>
-              </mat-select>
-            </mat-form-field>
+          </mat-expansion-panel>
+        </form>
+        <!-- Skills preview -->
+        @if (structuredResume?.skills?.length) {
+          <div style="margin-top: 20px">
+            <div class="section-title"><mat-icon>psychology</mat-icon> Skills (AI Extracted)</div>
+            @for (skillGroup of structuredResume!.skills; track skillGroup) {
+              <div style="margin-bottom: 12px">
+                <strong>{{skillGroup.category}}</strong>
+                <div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:6px">
+                  @for (s of skillGroup.skills; track s) {
+                    <span class="skill-chip">{{s}}</span>
+                  }
+                </div>
+              </div>
+            }
           </div>
-        </mat-expansion-panel>
-
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title><mat-icon>work</mat-icon>&nbsp; Professional Details</mat-panel-title>
-          </mat-expansion-panel-header>
-          <div class="form-grid">
-            <mat-form-field appearance="outline">
-              <mat-label>Designation</mat-label>
-              <input matInput formControlName="designation">
-            </mat-form-field>
+        }
+        @if (structuredResume?.relevant_skills?.length) {
+          <div style="margin-top: 20px">
+            <div class="section-title"><mat-icon>star</mat-icon> Top 3 Relevant Skills</div>
+            <div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:6px">
+              @for (skill of structuredResume!.relevant_skills; track skill) {
+                <span class="skill-chip">{{skill}}</span>
+              }
+            </div>
           </div>
-          <mat-form-field appearance="outline">
-            <mat-label>Summary</mat-label>
-            <textarea matInput formControlName="summary" rows="4"></textarea>
-          </mat-form-field>
-        </mat-expansion-panel>
-      </form>
-
-      <!-- Skills preview -->
-      <div *ngIf="structuredResume?.skills?.length" style="margin-top: 20px">
-        <div class="section-title"><mat-icon>psychology</mat-icon> Skills (AI Extracted)</div>
-        <div *ngFor="let skillGroup of structuredResume!.skills" style="margin-bottom: 12px">
-          <strong>{{skillGroup.category}}</strong>
-          <div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:6px">
-            <span *ngFor="let s of skillGroup.skills" class="skill-chip">{{s}}</span>
-          </div>
+        }
+        <div style="margin-top: 28px; display: flex; gap: 12px">
+          <button mat-stroked-button (click)="reset()"><mat-icon>restart_alt</mat-icon> Start Over</button>
+          <button mat-raised-button color="primary" (click)="onGenerate()" style="height:48px; font-size:1rem; padding: 0 32px">
+            <mat-icon>download</mat-icon> Generate &amp; Download Resume
+          </button>
         </div>
       </div>
-      <div *ngIf="structuredResume?.relevant_skills?.length" style="margin-top: 20px">
-        <div class="section-title"><mat-icon>star</mat-icon> Top 3 Relevant Skills</div>
-        <div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:6px">
-          <span *ngFor="let skill of structuredResume!.relevant_skills" class="skill-chip">{{skill}}</span>
-        </div>
-      </div>
-
-      <div style="margin-top: 28px; display: flex; gap: 12px">
-        <button mat-stroked-button (click)="reset()"><mat-icon>restart_alt</mat-icon> Start Over</button>
-        <button mat-raised-button color="primary" (click)="onGenerate()" style="height:48px; font-size:1rem; padding: 0 32px">
-          <mat-icon>download</mat-icon> Generate &amp; Download Resume
-        </button>
-      </div>
-    </div>
-
+    }
     <!-- Step 3: Done -->
-    <div *ngIf="step === 3" class="card done-card">
-      <mat-icon class="done-icon">check_circle</mat-icon>
-      <h2>Resume Generated Successfully!</h2>
-      <p>Your resume has been downloaded. You can download it again or start a new one.</p>
-      <div style="display: flex; gap: 12px; margin-top: 24px">
-        <button mat-stroked-button color="primary" (click)="downloadAgain()"><mat-icon>download</mat-icon> Download Again</button>
-        <button mat-raised-button color="primary" (click)="reset()"><mat-icon>add</mat-icon> New Resume</button>
+    @if (step === 3) {
+      <div class="card done-card">
+        <mat-icon class="done-icon">check_circle</mat-icon>
+        <h2>Resume Generated Successfully!</h2>
+        <p>Your resume has been downloaded. You can download it again or start a new one.</p>
+        <div style="display: flex; gap: 12px; margin-top: 24px">
+          <button mat-stroked-button color="primary" (click)="downloadAgain()"><mat-icon>download</mat-icon> Download Again</button>
+          <button mat-raised-button color="primary" (click)="reset()"><mat-icon>add</mat-icon> New Resume</button>
+        </div>
       </div>
-    </div>
-
-  </ng-container>
+    }
+  }
 </div>

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -10,12 +10,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
-  selector: 'app-login',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule,
-    MatFormFieldModule, MatInputModule, MatButtonModule,
-    MatIconModule, MatProgressSpinnerModule],
-  template: `
+    selector: 'app-login',
+    imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
+    template: `
 <div class="lp">
 
   <!-- ── Left: Brand Panel ── -->
@@ -36,10 +33,12 @@ import { AuthService } from '../../core/auth/auth.service';
       </p>
 
       <ul class="lp-features">
-        <li *ngFor="let f of features">
-          <span class="material-icons lp-fi">{{ f.icon }}</span>
-          <span>{{ f.label }}</span>
-        </li>
+        @for (f of features; track f) {
+          <li>
+            <span class="material-icons lp-fi">{{ f.icon }}</span>
+            <span>{{ f.label }}</span>
+          </li>
+        }
       </ul>
 
       <div class="lp-stat-row">
@@ -79,55 +78,60 @@ import { AuthService } from '../../core/auth/auth.service';
           <label>Email / Username</label>
           <mat-form-field appearance="outline">
             <input matInput formControlName="username"
-                   autocomplete="username"
-                   placeholder="Enter Username">
-            <mat-icon matSuffix>person_outline</mat-icon>
-          </mat-form-field>
-        </div>
+              autocomplete="username"
+              placeholder="Enter Username">
+              <mat-icon matSuffix>person_outline</mat-icon>
+            </mat-form-field>
+          </div>
 
-        <div class="lp-field">
-          <label>Password</label>
-          <mat-form-field appearance="outline">
-            <input matInput
-                   [type]="hide ? 'password' : 'text'"
-                   formControlName="password"
-                   autocomplete="current-password"
-                   placeholder="Enter Password">
-            <button mat-icon-button matSuffix type="button"
-                    (click)="hide = !hide">
-              <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+          <div class="lp-field">
+            <label>Password</label>
+            <mat-form-field appearance="outline">
+              <input matInput
+                [type]="hide ? 'password' : 'text'"
+                formControlName="password"
+                autocomplete="current-password"
+                placeholder="Enter Password">
+                <button mat-icon-button matSuffix type="button"
+                  (click)="hide = !hide">
+                  <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+              </mat-form-field>
+            </div>
+
+            @if (error) {
+              <div class="lp-error">
+                <span class="material-icons">error_outline</span>
+                {{ error }}
+              </div>
+            }
+
+            <button class="lp-submit" type="submit"
+              [disabled]="loading || form.invalid">
+              @if (loading) {
+                <mat-spinner diameter="20"
+                style="display:inline-flex"></mat-spinner>
+              }
+              @if (!loading) {
+                <span class="material-icons" style="font-size:1rem">login</span>
+                Sign In to HRMS
+              }
             </button>
-          </mat-form-field>
+
+          </form>
+
+          <div class="lp-secure">
+            <span class="material-icons" style="font-size:0.9rem">lock</span>
+            Secured by MeganSoft IT Security
+          </div>
+
         </div>
-
-        <div class="lp-error" *ngIf="error">
-          <span class="material-icons">error_outline</span>
-          {{ error }}
-        </div>
-
-        <button class="lp-submit" type="submit"
-                [disabled]="loading || form.invalid">
-          <mat-spinner *ngIf="loading" diameter="20"
-                       style="display:inline-flex"></mat-spinner>
-          <ng-container *ngIf="!loading">
-            <span class="material-icons" style="font-size:1rem">login</span>
-            Sign In to HRMS
-          </ng-container>
-        </button>
-
-      </form>
-
-      <div class="lp-secure">
-        <span class="material-icons" style="font-size:0.9rem">lock</span>
-        Secured by MeganSoft IT Security
       </div>
 
     </div>
-  </div>
-
-</div>
-  `,
-  styles: [`
+`,
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styles: [`
 /* ── Page container ── */
 .lp {
   min-height: 100vh;

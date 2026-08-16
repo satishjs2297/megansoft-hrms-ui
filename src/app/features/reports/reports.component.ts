@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ElementRef, TemplateRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
@@ -21,11 +21,11 @@ import { ReportService } from '../../core/services/report.service';
 import { AssessmentListParams, AssessmentRecord, AssessmentSummary } from '../../core/models/assessment.model';
 
 @Component({
-  selector: 'app-reports',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, MatTableModule, MatProgressSpinnerModule, MatSnackBarModule, MatDividerModule, MatDialogModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule],
-  templateUrl: './reports.component.html',
-  styleUrls: ['./reports.component.scss']
+    selector: 'app-reports',
+    imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, MatTableModule, MatProgressSpinnerModule, MatSnackBarModule, MatDividerModule, MatDialogModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule],
+    templateUrl: './reports.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./reports.component.scss']
 })
 export class ReportsComponent implements OnInit {
   @ViewChild('chartDialog') chartDialog!: TemplateRef<unknown>;
