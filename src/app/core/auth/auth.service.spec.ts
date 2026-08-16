@@ -11,20 +11,36 @@ describe('AuthService', () => {
     service = new AuthService({} as HttpClient);
   });
 
-  it('returns a default route for full-access users', () => {
-    localStorage.setItem('hrms_permissions', JSON.stringify(['app:full_access']));
+  it('initializes as logged out', () => {
+    expect(service.isLoggedIn()).toBe(false);
+    expect(service.getToken()).toBeNull();
+  });
+
+  it('returns login route when no permissions set', () => {
+    expect(service.getDefaultRoute()).toBe('/login');
+  });
+
+  it('returns resume route for full-access permission', () => {
+    const testResponse = {
+      access_token: 'test-token',
+      username: 'testuser',
+      role: 'admin',
+      permissions: ['app:full_access']
+    };
+    service['persistSession'](testResponse);
     expect(service.getDefaultRoute()).toBe('/resume');
     expect(service.hasPermission('app:full_access')).toBe(true);
   });
 
-  it('returns a default route for assessment users', () => {
-    localStorage.setItem('hrms_permissions', JSON.stringify(['assessment:write']));
+  it('returns assessment route for assessment:write permission', () => {
+    const testResponse = {
+      access_token: 'test-token',
+      username: 'assessor',
+      role: 'assessor',
+      permissions: ['assessment:write']
+    };
+    service['persistSession'](testResponse);
     expect(service.getDefaultRoute()).toBe('/assessment');
-  });
-
-  it('tracks login state from the token', () => {
-    expect(service.isLoggedIn()).toBe(false);
-    localStorage.setItem('hrms_token', 'token');
-    expect(service.isLoggedIn()).toBe(true);
+    expect(service.hasPermission('assessment:write')).toBe(true);
   });
 });

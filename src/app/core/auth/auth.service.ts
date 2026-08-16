@@ -24,7 +24,7 @@ export class AuthService {
 
   readonly isAuthenticated = computed(() => !!this.tokenSignal());
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   login(username: string, password: string): Observable<LoginResponse> {
     const body = new HttpParams()
@@ -51,22 +51,18 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    this.syncStateFromStorage();
     return this.tokenSignal();
   }
 
   getUsername(): string | null {
-    this.syncStateFromStorage();
     return this.usernameSignal();
   }
 
   getRole(): string | null {
-    this.syncStateFromStorage();
     return this.roleSignal();
   }
 
   getPermissions(): string[] {
-    this.syncStateFromStorage();
     return this.permissionsSignal();
   }
 
