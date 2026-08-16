@@ -26,6 +26,31 @@
         </label>
         <p *ngIf="selectedFile" class="file-name"><mat-icon>check_circle</mat-icon> {{selectedFile.name}}</p>
       </div>
+      <div class="section-title" style="margin-top: 16px"><mat-icon>article</mat-icon> Optional: Job Description</div>
+      <mat-form-field appearance="outline" style="width: 100%">
+        <mat-label>Job Description</mat-label>
+        <textarea matInput rows="6" placeholder="Paste or type the job description here..."
+          [value]="jdText" (input)="onJdTextInput($event)"></textarea>
+      </mat-form-field>
+      <div class="upload-row" style="margin-top: 8px">
+        <label class="upload-label">
+          <input type="file" accept=".txt,.pdf,.docx,.doc" (change)="onJdFileSelected($event)" hidden>
+          <button mat-stroked-button color="primary" type="button" onclick="this.previousElementSibling.click()">
+            <mat-icon>attach_file</mat-icon> Upload JD (Optional)
+          </button>
+        </label>
+        <span *ngIf="selectedJdFile" class="file-name"><mat-icon>check_circle</mat-icon> {{selectedJdFile.name}}</span>
+      </div>
+      <div class="section-title" style="margin-top: 16px"><mat-icon>photo_camera</mat-icon> Optional: Candidate Photo</div>
+      <div class="upload-row" style="margin-top: 8px">
+        <label class="upload-label">
+          <input type="file" accept=".jpg,.jpeg,.png,.webp" (change)="onPhotoSelected($event)" hidden>
+          <button mat-stroked-button color="primary" type="button" onclick="this.previousElementSibling.click()">
+            <mat-icon>attach_file</mat-icon> Upload Photo
+          </button>
+        </label>
+        <span *ngIf="selectedPhotoFile" class="file-name"><mat-icon>check_circle</mat-icon> {{selectedPhotoFile.name}}</span>
+      </div>
 
       <mat-divider style="margin: 20px 0"></mat-divider>
 
@@ -154,6 +179,12 @@
           <div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:6px">
             <span *ngFor="let s of skillGroup.skills" class="skill-chip">{{s}}</span>
           </div>
+        </div>
+      </div>
+      <div *ngIf="structuredResume?.relevant_skills?.length" style="margin-top: 20px">
+        <div class="section-title"><mat-icon>star</mat-icon> Top 3 Relevant Skills</div>
+        <div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:6px">
+          <span *ngFor="let skill of structuredResume!.relevant_skills" class="skill-chip">{{skill}}</span>
         </div>
       </div>
 

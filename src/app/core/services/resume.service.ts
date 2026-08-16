@@ -16,8 +16,11 @@ export class ResumeService {
     return this.http.post<{ extracted_text: string; file_type: string }>(`${this.base}/extract`, fd);
   }
 
-  structureResume(extractedText: string): Observable<StructuredResume> {
-    return this.http.post<StructuredResume>(`${this.base}/structure`, { extracted_text: extractedText });
+  structureResume(extractedText: string, jobDescriptionText = ''): Observable<StructuredResume> {
+    return this.http.post<StructuredResume>(`${this.base}/structure`, {
+      extracted_text: extractedText,
+      job_description_text: jobDescriptionText
+    });
   }
 
   generateResume(resumeData: StructuredResume, templateId: string): Observable<Blob> {

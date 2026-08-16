@@ -3,3 +3,23 @@
    This file only has component-specific overrides if needed. */
 
 :host { display: block; }
+
+.api-progress {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 90;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-xs);
+}
+
+.api-progress-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 36px;
+  color: var(--text-500);
+  font-size: 0.82rem;
+  font-weight: 600;
+}

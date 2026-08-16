@@ -80,7 +80,7 @@ import { AuthService } from '../../core/auth/auth.service';
           <mat-form-field appearance="outline">
             <input matInput formControlName="username"
                    autocomplete="username"
-                   placeholder="hr@megansoft.com">
+                   placeholder="Enter Username">
             <mat-icon matSuffix>person_outline</mat-icon>
           </mat-form-field>
         </div>
@@ -92,7 +92,7 @@ import { AuthService } from '../../core/auth/auth.service';
                    [type]="hide ? 'password' : 'text'"
                    formControlName="password"
                    autocomplete="current-password"
-                   placeholder="••••••••">
+                   placeholder="Enter Password">
             <button mat-icon-button matSuffix type="button"
                     (click)="hide = !hide">
               <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
@@ -449,7 +449,7 @@ export class LoginComponent {
     this.error = '';
     const { username, password } = this.form.value;
     this.auth.login(username!, password!).subscribe({
-      next: () => { this.loading = false; this.router.navigate(['/resume']); },
+      next: () => { this.loading = false; this.router.navigate([this.auth.getDefaultRoute()]); },
       error: () => { this.loading = false; this.error = 'Invalid username or password. Please try again.'; }
     });
   }

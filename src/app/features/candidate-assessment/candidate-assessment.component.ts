@@ -113,7 +113,7 @@ export class CandidateAssessmentComponent {
     const payload: AssessmentCreate = {
       candidate_name: val.candidate_name!,
       panel_name: val.panel_name!,
-      date_of_interview: val.date_of_interview!,
+      date_of_interview: this.formatDate(val.date_of_interview)!,
       assessment_status: val.assessment_status as AssessmentStatus,
       skills_assessment: this.skillRatings,
       overall_observation: val.overall_observation || '',
@@ -136,5 +136,22 @@ export class CandidateAssessmentComponent {
 
   private showError(msg: string) {
     this.snack.open(msg, 'Close', { duration: 5000, panelClass: 'error-snack' });
+  }
+
+  private formatDate(value: unknown): string {
+    if (!value) return '';
+    if (value instanceof Date && !Number.isNaN(value.getTime())) {
+      const day = `${value.getDate()}`.padStart(2, '0');
+      const month = `${value.getMonth() + 1}`.padStart(2, '0');
+      const year = value.getFullYear();
+      return `${day}-${month}-${year}`;
+    }
+    if (typeof value === 'string') {
+      const datePart = value.split('T')[0];
+      const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(datePart);
+      if (match) return `${match[3]}-${match[2]}-${match[1]}`;
+      return value;
+    }
+    return String(value);
   }
 }
