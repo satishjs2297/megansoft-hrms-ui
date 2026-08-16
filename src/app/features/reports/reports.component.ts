@@ -135,6 +135,13 @@ export class ReportsComponent implements OnInit {
     a.click();
   }
 
+  downloadRecord(record: AssessmentRecord) {
+    this.reportService.exportPdf(record.id).subscribe({
+      next: (blob) => this.downloadBlob(blob, this.buildPdfFilename(record.candidate_name, record.date_of_interview)),
+      error: () => this.snack.open('PDF download failed', 'Close', { duration: 3000, panelClass: 'error-snack' })
+    });
+  }
+
   exportAllCsv() {
     this.reportService.exportAllCsv().subscribe({
       next: (blob) => this.downloadBlob(blob, `assessments_${new Date().toISOString().slice(0,10)}.csv`),
@@ -205,6 +212,11 @@ export class ReportsComponent implements OnInit {
     a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  private buildPdfFilename(name: string, dateValue: unknown): string {
+    const safeName = (name || 'assessment').trim().replace(/\s+/g, '_');
+    return `assessment_${safeName}_${this.formatDisplayDate(dateValue).replace(/\s+/g, '_')}.pdf`;
   }
 
   private buildQueryParams(): AssessmentListParams {

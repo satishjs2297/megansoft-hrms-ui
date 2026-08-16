@@ -1,0 +1,5 @@
+current report page is basic level just listing out the candidate report. I want enchance the funtionality with following.
+
+1) Server side pagination with pageNo and maxRecords per page etc...
+2) Add advance search options which can help to filter based on Panel name, Feedback status, date etc..
+4) Add a feature to generate bar chart on the searched records, currently it is able to exportt all records, we need bar chart shoud show up on the popup widget that popup widge/dialoge should have option to download the bar chart as a image
