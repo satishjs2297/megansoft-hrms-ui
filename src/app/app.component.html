@@ -1,144 +1,138 @@
 <!-- Login route — bare, no shell -->
 @if (!authService.isLoggedIn()) {
-  <router-outlet />
+<router-outlet />
 }
 
 <!-- Authenticated shell -->
 @if (authService.isLoggedIn()) {
-  <!-- Mobile backdrop -->
-  <div class="sidebar-backdrop"
-    [class.visible]="isMobile() && mobileOpen()"
-  (click)="closeMobileMenu()"></div>
-  <div class="app-shell">
-    <!-- ══════════════ SIDEBAR ══════════════ -->
-    <aside class="sidebar" [ngClass]="sidebarClasses()">
-      <!-- Header: logo + toggle -->
-      <div class="sidebar-header">
-        <div class="sb-logo-wrap">
-          <div class="logo-pill">
-            <img src="assets/megansoft-logo.png" alt="MeganSoft" />
-          </div>
-          <span class="logo-sub">HRMS</span>
-        </div>
-        <button class="sb-toggle" (click)="toggleSidebar()" [title]="toggleIcon()">
-          <span class="material-icons" style="font-size:1.1rem">{{ toggleIcon() }}</span>
-        </button>
-      </div>
-      <!-- Navigation -->
-      <nav class="sb-nav">
-        @for (group of navGroups; track group) {
-          <div class="sb-group">
-            <div class="sb-group-label">{{ group.groupLabel }}</div>
-            @for (item of group.items; track item) {
-              <!-- Active link -->
-              @if (!item.disabled && isNavItemVisible(item)) {
-                <a
-                  class="sb-item"
-                  [routerLink]="item.route"
-                  routerLinkActive="sb-active"
-                  [matTooltip]="sidebarCollapsed() && !isMobile() ? item.label : ''"
-                  matTooltipPosition="right">
-                  <span class="sb-icon material-icons">{{ item.icon }}</span>
-                  <span class="sb-label">{{ item.label }}</span>
-                </a>
-              }
-              <!-- Disabled / coming soon -->
-              @if (item.disabled && isNavItemVisible(item)) {
-                <div class="sb-item sb-disabled"
-                  [matTooltip]="sidebarCollapsed() && !isMobile() ? item.label + ' (Coming Soon)' : ''"
-                  matTooltipPosition="right">
-                  <span class="sb-icon material-icons">{{ item.icon }}</span>
-                  <span class="sb-label">{{ item.label }}</span>
-                  <span class="sb-soon">Soon</span>
-                </div>
-              }
-            }
-          </div>
-        }
-      </nav>
-      <!-- User / logout -->
-      <div class="sb-footer">
-        <div class="sb-user" (click)="logout()"
-          [matTooltip]="sidebarCollapsed() && !isMobile() ? 'Sign out (' + username + ')' : ''"
-          matTooltipPosition="right">
-          <div class="sb-avatar">{{ userInitials }}</div>
-          <div class="sb-user-info">
-            <div class="sb-user-name">{{ username }}</div>
-            <div class="sb-user-role">{{ roleLabel }}</div>
-          </div>
-          <span class="sb-logout-icon material-icons">logout</span>
-        </div>
-      </div>
-    </aside>
-    <!-- /sidebar -->
-    <!-- ══════════════ MAIN WRAPPER ══════════════ -->
-    <div class="main-wrapper" [ngClass]="mainWrapperClasses()">
-      <!-- Top Header -->
-      <header class="top-header">
-        <!-- Mobile: hamburger -->
-        <button class="header-hamburger" (click)="toggleSidebar()">
-          <span class="material-icons">{{ mobileOpen() ? 'close' : 'menu' }}</span>
-        </button>
-        <!-- Mobile: logo -->
-        <div class="header-logo-mobile">
+<!-- Mobile backdrop -->
+<div class="sidebar-backdrop" [class.visible]="isMobile() && mobileOpen()" (click)="closeMobileMenu()"></div>
+<div class="app-shell">
+  <!-- ══════════════ SIDEBAR ══════════════ -->
+  <aside class="sidebar" [ngClass]="sidebarClasses()">
+    <!-- Header: logo + toggle -->
+    <div class="sidebar-header">
+      <div class="sb-logo-wrap">
+        <div class="logo-pill">
           <img src="assets/megansoft-logo.png" alt="MeganSoft" />
         </div>
-        <!-- Desktop: breadcrumb -->
-        <nav class="header-breadcrumb">
-          <span class="bc-icon material-icons">corporate_fare</span>
-          <span>MeganSoft HRMS</span>
-          <span class="bc-sep material-icons">chevron_right</span>
-          <span>{{ currentSection() }}</span>
-          <span class="bc-sep material-icons">chevron_right</span>
-          <span class="bc-current">{{ currentPageTitle() }}</span>
-        </nav>
-        <!-- Actions -->
-        <div class="header-actions">
-          <button class="h-icon-btn material-icons" title="Help">help_outline</button>
-          <button class="h-icon-btn material-icons" title="Notifications">notifications_none</button>
-          <div class="h-user-pill" (click)="logout()" title="Sign out">
-            <div class="h-avatar">{{ userInitials }}</div>
-            <span class="h-username">{{ username }}</span>
-            <span class="h-caret material-icons">expand_more</span>
-          </div>
-        </div>
-      </header>
-      @if (apiLoading.loading()) {
-        <div class="api-progress" role="status" aria-live="polite">
-          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-          <div class="api-progress-label">
-            <mat-spinner diameter="18"></mat-spinner>
-            <span>Processing request...</span>
-          </div>
-        </div>
-      }
-      <!-- Page Content -->
-      <main class="page-content">
-        <router-outlet />
-      </main>
-      <!-- Footer -->
-      <footer class="app-footer">
-        <div class="footer-inner">
-          <div class="footer-brand">
-            <img src="assets/megansoft-logo.png" alt="MeganSoft" />
-            <div class="footer-tagline">
-              <strong>MeganSoft HRMS</strong> &nbsp;·&nbsp;
-              20+ years of global IT &amp; consulting excellence
-            </div>
-          </div>
-          <div class="footer-links">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#">Support</a>
-            <a href="#">Release Notes</a>
-          </div>
-          <div class="footer-copy">
-            &copy; {{ currentYear }} MeganSoft. All rights reserved. &nbsp;v1.0.0
-          </div>
-        </div>
-      </footer>
+        <span class="logo-sub">HRMS</span>
+      </div>
+      <button class="sb-toggle" (click)="toggleSidebar()" [title]="toggleIcon()">
+        <span class="material-icons" style="font-size:1.1rem">{{ toggleIcon() }}</span>
+      </button>
     </div>
-    <!-- /main-wrapper -->
+    <!-- Navigation -->
+    <nav class="sb-nav">
+      @for (group of navGroups; track group) {
+      <div class="sb-group">
+        <div class="sb-group-label">{{ group.groupLabel }}</div>
+        @for (item of group.items; track item) {
+        <!-- Active link -->
+        @if (!item.disabled && isNavItemVisible(item)) {
+        <a class="sb-item" [routerLink]="item.route" routerLinkActive="sb-active"
+          [matTooltip]="sidebarCollapsed() && !isMobile() ? item.label : ''" matTooltipPosition="right">
+          <span class="sb-icon material-icons">{{ item.icon }}</span>
+          <span class="sb-label">{{ item.label }}</span>
+        </a>
+        }
+        <!-- Disabled / coming soon -->
+        @if (item.disabled && isNavItemVisible(item)) {
+        <div class="sb-item sb-disabled"
+          [matTooltip]="sidebarCollapsed() && !isMobile() ? item.label + ' (Coming Soon)' : ''"
+          matTooltipPosition="right">
+          <span class="sb-icon material-icons">{{ item.icon }}</span>
+          <span class="sb-label">{{ item.label }}</span>
+          <span class="sb-soon">Soon</span>
+        </div>
+        }
+        }
+      </div>
+      }
+    </nav>
+    <!-- User / logout -->
+    <div class="sb-footer">
+      <div class="sb-user" (click)="logout()"
+        [matTooltip]="sidebarCollapsed() && !isMobile() ? 'Sign out (' + username + ')' : ''"
+        matTooltipPosition="right">
+        <div class="sb-avatar">{{ userInitials }}</div>
+        <div class="sb-user-info">
+          <div class="sb-user-name">{{ username }}</div>
+          <div class="sb-user-role">{{ roleLabel }}</div>
+        </div>
+        <span class="sb-logout-icon material-icons">logout</span>
+      </div>
+    </div>
+  </aside>
+  <!-- /sidebar -->
+  <!-- ══════════════ MAIN WRAPPER ══════════════ -->
+  <div class="main-wrapper" [ngClass]="mainWrapperClasses()">
+    <!-- Top Header -->
+    <header class="top-header">
+      <!-- Mobile: hamburger -->
+      <button class="header-hamburger" (click)="toggleSidebar()">
+        <span class="material-icons">{{ mobileOpen() ? 'close' : 'menu' }}</span>
+      </button>
+      <!-- Mobile: logo -->
+      <div class="header-logo-mobile">
+        <img src="assets/megansoft-logo.png" alt="MeganSoft" />
+      </div>
+      <!-- Desktop: breadcrumb -->
+      <nav class="header-breadcrumb">
+        <span class="bc-icon material-icons">corporate_fare</span>
+        <span>MeganSoft HRMS</span>
+        <span class="bc-sep material-icons">chevron_right</span>
+        <span>{{ currentSection() }}</span>
+        <span class="bc-sep material-icons">chevron_right</span>
+        <span class="bc-current">{{ currentPageTitle() }}</span>
+      </nav>
+      <!-- Actions -->
+      <div class="header-actions">
+        <button class="h-icon-btn material-icons" title="Help">help_outline</button>
+        <button class="h-icon-btn material-icons" title="Notifications">notifications_none</button>
+        <div class="h-user-pill" (click)="logout()" title="Sign out">
+          <div class="h-avatar">{{ userInitials }}</div>
+          <span class="h-username">{{ username }}</span>
+          <span class="h-caret material-icons">expand_more</span>
+        </div>
+      </div>
+    </header>
+    @if (apiLoading.loading()) {
+    <div class="api-progress" role="status" aria-live="polite">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <div class="api-progress-label">
+        <mat-spinner diameter="18"></mat-spinner>
+        <span>Processing request...</span>
+      </div>
+    </div>
+    }
+    <!-- Page Content -->
+    <main class="page-content">
+      <router-outlet />
+    </main>
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <img src="assets/megansoft-logo.png" alt="MeganSoft" />
+          <div class="footer-tagline">
+            <strong>MeganSoft HRMS</strong> &nbsp;·&nbsp;
+            20+ years of global IT &amp; consulting excellence
+          </div>
+        </div>
+        <div class="footer-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Support</a>
+          <a href="#">Release Notes</a>
+        </div>
+        <div class="footer-copy">
+          &copy; {{ currentYear }} MeganSoft. All rights reserved. &nbsp;v1.0.0
+        </div>
+      </div>
+    </footer>
   </div>
-  <!-- /app-shell -->
+  <!-- /main-wrapper -->
+</div>
+<!-- /app-shell -->
 }

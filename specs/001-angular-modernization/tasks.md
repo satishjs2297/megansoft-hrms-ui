@@ -17,7 +17,7 @@
 **Purpose**: Establish the modernization baseline and local validation workflow before story delivery.
 
 - [ ] T001 [P] Audit the current Angular 22 app baseline and record the modernization hotspots in src/app, src/environments, and package.json
-- [ ] T002 [P] Add the Vite/Vitest-enabled frontend workflow and scripts in package.json and project-level configuration files
+- [x] T002 [P] Add the Vite/Vitest-enabled frontend workflow and scripts in package.json and project-level configuration files
 - [ ] T003 [P] Define a baseline modernization checklist and validation commands aligned with quickstart.md and the app’s current feature routes
 
 ---
@@ -28,10 +28,10 @@
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel.
 
-- [ ] T004 Establish the app-level loading and error-state contract in src/app/core/services/api-loading.service.ts and src/app/core/services/api-loading.interceptor.ts
-- [ ] T005 [P] Stabilize the authentication baseline and route guards in src/app/core/auth/auth.service.ts and src/app/core/auth/auth.guard.ts
-- [ ] T006 [P] Define the shared state boundaries for the shell and protected routes in src/app/app.component.ts and src/app/app.routes.ts
-- [ ] T007 Confirm the existing API contracts remain compatible with the planned modernization in src/app/core/services/assessment.service.ts, src/app/core/services/resume.service.ts, and src/app/core/services/report.service.ts
+- [x] T004 Establish the app-level loading and error-state contract in src/app/core/services/api-loading.service.ts and src/app/core/services/api-loading.interceptor.ts
+- [x] T005 [P] Stabilize the authentication baseline and route guards in src/app/core/auth/auth.service.ts and src/app/core/auth/auth.guard.ts
+- [x] T006 [P] Define the shared state boundaries for the shell and protected routes in src/app/app.component.ts and src/app/app.routes.ts
+- [x] T007 Confirm the existing API contracts remain compatible with the planned modernization in src/app/core/services/assessment.service.ts, src/app/core/services/resume.service.ts, and src/app/core/services/report.service.ts
 
 ---
 
@@ -43,10 +43,10 @@
 
 ### Implementation for User Story 1
 
-- [ ] T008 [P] [US1] Refactor the root app shell to use a clearer, lower-churn state model in src/app/app.component.ts
-- [ ] T009 [US1] Update route and navigation composition in src/app/app.routes.ts to keep the modernized structure consistent with protected access rules
-- [ ] T010 [US1] Refresh auth flow and permission checks in src/app/core/auth/auth.service.ts to support the modernized route contract without changing business behavior
-- [ ] T011 [US1] Confirm the app shell remains stable on login, redirect, and permission-driven navigation scenarios
+- [x] T008 [P] [US1] Refactor the root app shell to use a clearer, lower-churn state model in src/app/app.component.ts
+- [x] T009 [US1] Update route and navigation composition in src/app/app.routes.ts to keep the modernized structure consistent with protected access rules
+- [x] T010 [US1] Refresh auth flow and permission checks in src/app/core/auth/auth.service.ts to support the modernized route contract without changing business behavior
+- [x] T011 [US1] Confirm the app shell remains stable on login, redirect, and permission-driven navigation scenarios
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently.
 
@@ -60,10 +60,10 @@
 
 ### Implementation for User Story 2
 
-- [ ] T012 [P] [US2] Review and apply OnPush or equivalent controlled update strategy in src/app/features/candidate-assessment/candidate-assessment.component.ts
-- [ ] T013 [US2] Split local form, rating, and derived UI state into more precise state boundaries in src/app/features/candidate-assessment/candidate-assessment.component.ts
-- [ ] T014 [US2] Remove redundant unnecessary updates in the assessment component and related template markup in src/app/features/candidate-assessment/
-- [ ] T015 [US2] Validate the assessment screen remains responsive during repeated skill selection, summary generation, and submission actions
+- [x] T012 [P] [US2] Review and apply OnPush or equivalent controlled update strategy in src/app/features/candidate-assessment/candidate-assessment.component.ts
+- [x] T013 [US2] Split local form, rating, and derived UI state into more precise state boundaries in src/app/features/candidate-assessment/candidate-assessment.component.ts
+- [x] T014 [US2] Remove redundant unnecessary updates in the assessment component and related template markup in src/app/features/candidate-assessment/
+- [x] T015 [US2] Validate the assessment screen remains responsive during repeated skill selection, summary generation, and submission actions
 
 **Checkpoint**: At this point, User Story 1 AND 2 should both work independently.
 
@@ -92,10 +92,10 @@
 
 ### Implementation for User Story 4
 
-- [ ] T020 [P] [US4] Add Vite/Vitest-friendly build and validation commands in package.json and project configuration files
-- [ ] T021 [US4] Add a minimal test harness for core Angular behaviors in a test directory or feature-level test files
-- [ ] T022 [US4] Add a local regression validation path aligned with quickstart.md and the existing app workflows
-- [ ] T023 [US4] Run the modernization validation workflow and confirm that build/test feedback is faster and reliable
+- [x] T020 [P] [US4] Add Vite/Vitest-friendly build and validation commands in package.json and project configuration files
+- [x] T021 [US4] Add a minimal test harness for core Angular behaviors in a test directory or feature-level test files
+- [x] T022 [US4] Add a local regression validation path aligned with quickstart.md and the existing app workflows
+- [x] T023 [US4] Run the modernization validation workflow and confirm that build/test feedback is faster and reliable
 
 ---
 
