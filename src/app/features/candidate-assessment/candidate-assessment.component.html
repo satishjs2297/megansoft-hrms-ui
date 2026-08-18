@@ -4,136 +4,137 @@
     <p>Upload job description, rate candidate skills, and record assessment</p>
   </div>
 
-  @if (submitted) {
-    <div class="card done-card">
-      <mat-icon class="done-icon">check_circle</mat-icon>
-      <h2>Assessment Saved!</h2>
-      <p>The assessment has been recorded successfully.</p>
-      <button mat-raised-button color="primary" (click)="reset()" style="margin-top: 24px">
-        <mat-icon>add</mat-icon> New Assessment
-      </button>
-    </div>
+  @if (submitted()) {
+  <div class="card done-card">
+    <mat-icon class="done-icon">check_circle</mat-icon>
+    <h2>Assessment Saved!</h2>
+    <p>The assessment has been recorded successfully.</p>
+    <button mat-raised-button color="primary" (click)="reset()" style="margin-top: 24px">
+      <mat-icon>add</mat-icon> New Assessment
+    </button>
+  </div>
   }
 
-  @if (!submitted) {
-    <!-- JD Upload -->
-    <div class="card" style="margin-bottom: 20px">
-      <div class="section-title"><mat-icon>article</mat-icon> Job Description</div>
-      <mat-form-field appearance="outline" style="width: 100%">
-        <mat-label>Job Description</mat-label>
-        <textarea matInput rows="6" placeholder="Paste or type the job description here..."
-        [value]="jdText" (input)="onJdTextInput($event)"></textarea>
-      </mat-form-field>
-      <div class="upload-row" style="margin-top: 8px">
-        <label>
-          <input type="file" accept=".txt,.pdf,.docx" (change)="onJdFileSelected($event)" hidden>
-          <button mat-stroked-button type="button" onclick="this.previousElementSibling.click()">
-            <mat-icon>attach_file</mat-icon> Upload JD (Optional)
-          </button>
-        </label>
-        @if (jdFile) {
-          <span class="file-name"><mat-icon>check_circle</mat-icon> {{jdFile.name}}</span>
-        }
-        <button mat-raised-button color="accent" [disabled]="!jdText.trim() || extractingSkills" (click)="extractSkills()">
-          @if (extractingSkills) {
-            <mat-spinner diameter="18"></mat-spinner>
-          }
-          @if (!extractingSkills) {
-            <mat-icon>psychology</mat-icon>
-          }
-          {{extractingSkills ? 'Extracting...' : 'Extract Skills'}}
+  @if (!submitted()) {
+  <!-- JD Upload -->
+  <div class="card" style="margin-bottom: 20px">
+    <div class="section-title"><mat-icon>article</mat-icon> Job Description</div>
+    <mat-form-field appearance="outline" style="width: 100%">
+      <mat-label>Job Description</mat-label>
+      <textarea matInput rows="6" placeholder="Paste or type the job description here..." [value]="jdText()"
+        (input)="onJdTextInput($event)"></textarea>
+    </mat-form-field>
+    <div class="upload-row" style="margin-top: 8px">
+      <label>
+        <input type="file" accept=".txt,.pdf,.docx" (change)="onJdFileSelected($event)" hidden>
+        <button mat-stroked-button type="button" onclick="this.previousElementSibling.click()">
+          <mat-icon>attach_file</mat-icon> Upload JD (Optional)
         </button>
-      </div>
+      </label>
+      @if (jdFile()) {
+      <span class="file-name"><mat-icon>check_circle</mat-icon> {{jdFile()!.name}}</span>
+      }
+      <button mat-raised-button color="accent" [disabled]="!jdText().trim() || extractingSkills()"
+        (click)="extractSkills()">
+        @if (extractingSkills()) {
+        <mat-spinner diameter="18"></mat-spinner>
+        }
+        @if (!extractingSkills()) {
+        <mat-icon>psychology</mat-icon>
+        }
+        {{extractingSkills() ? 'Extracting...' : 'Extract Skills'}}
+      </button>
     </div>
-    <!-- Assessment Form -->
-    <div class="card">
-      <div class="section-title"><mat-icon>person_search</mat-icon> Assessment Details</div>
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="form-grid">
-          <mat-form-field appearance="outline">
-            <mat-label>Candidate Name</mat-label>
-            <input matInput formControlName="candidate_name">
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Panel / Interviewer Name</mat-label>
-            <input matInput formControlName="panel_name">
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Date of Interview</mat-label>
-            <input matInput [matDatepicker]="interviewDatePicker" formControlName="date_of_interview">
-            <mat-datepicker-toggle matIconSuffix [for]="interviewDatePicker"></mat-datepicker-toggle>
-            <mat-datepicker #interviewDatePicker></mat-datepicker>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Assessment Status</mat-label>
-            <mat-select formControlName="assessment_status">
-              @for (s of statuses; track s) {
-                <mat-option [value]="s">{{s}}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-        </div>
-        <!-- Skill Ratings -->
-        @if (skillGroups.length) {
-          <div style="margin-top: 20px">
-            <div class="section-title"><mat-icon>star_rate</mat-icon> Skill Ratings</div>
-            <div class="skills-grid">
-              @for (skill of skillGroups; track skill) {
-                <div class="skill-row">
-                  <span class="skill-name">{{skill}}</span>
-                  <div class="rating-buttons">
-                    @for (r of ratings; track r) {
-                      <button type="button" mat-stroked-button
-                        [class]="'rating-btn ' + getRatingClass(r)"
-                        [class.active]="skillRatings[skill] === r"
-                        (click)="setRating(skill, r)">
-                        {{r}}
-                      </button>
-                    }
-                  </div>
-                </div>
+  </div>
+  <!-- Assessment Form -->
+  <div class="card">
+    <div class="section-title"><mat-icon>person_search</mat-icon> Assessment Details</div>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Candidate Name</mat-label>
+          <input matInput formControlName="candidate_name">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Panel / Interviewer Name</mat-label>
+          <input matInput formControlName="panel_name">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Date of Interview</mat-label>
+          <input matInput [matDatepicker]="interviewDatePicker" formControlName="date_of_interview">
+          <mat-datepicker-toggle matIconSuffix [for]="interviewDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #interviewDatePicker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Assessment Status</mat-label>
+          <mat-select formControlName="assessment_status">
+            @for (s of statuses; track s) {
+            <mat-option [value]="s">{{s}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <!-- Skill Ratings -->
+      @if (skillGroups().length) {
+      <div style="margin-top: 20px">
+        <div class="section-title"><mat-icon>star_rate</mat-icon> Skill Ratings</div>
+        <div class="skills-grid">
+          @for (skill of skillGroups(); track skill) {
+          <div class="skill-row">
+            <span class="skill-name">{{skill}}</span>
+            <div class="rating-buttons">
+              @for (r of ratings; track r) {
+              <button type="button" mat-stroked-button [class]="'rating-btn ' + getRatingClass(r)"
+                [class.active]="skillRatings()[skill] === r" (click)="setRating(skill, r)">
+                {{r}}
+              </button>
               }
             </div>
           </div>
-        }
-        @if (!skillGroups.length) {
-          <div class="no-skills">
-            <mat-icon>info</mat-icon>
-            Enter or upload a job description and click "Extract Skills" to rate candidate skills.
-          </div>
-        }
-        <div style="margin-top: 20px">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px">
-            <span style="font-weight: 500; color: #374151">Overall Observation</span>
-            <button mat-stroked-button color="accent" type="button"
-              [disabled]="generatingSummary || !skillGroups.length || !form.value.candidate_name?.trim()"
-              (click)="generateSummary()">
-              @if (generatingSummary) {
-                <mat-spinner diameter="18" style="display:inline-block; margin-right:6px"></mat-spinner>
-              }
-              @if (!generatingSummary) {
-                <mat-icon>auto_awesome</mat-icon>
-              }
-              {{generatingSummary ? 'Generating...' : 'Generate AI Summary'}}
-            </button>
-          </div>
-          <mat-form-field appearance="outline" style="width: 100%">
-            <textarea matInput formControlName="overall_observation" rows="5" placeholder="Enter overall feedback about the candidate, or click 'Generate AI Summary' to auto-fill..."></textarea>
-          </mat-form-field>
+          }
         </div>
-        <div style="margin-top: 16px; display: flex; gap: 12px">
-          <button mat-stroked-button type="button" (click)="reset()"><mat-icon>restart_alt</mat-icon> Reset</button>
-          <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || !skillGroups.length || submitting" style="height:48px">
-            @if (submitting) {
-              <mat-spinner diameter="18"></mat-spinner>
+      </div>
+      }
+      @if (!skillGroups().length) {
+      <div class="no-skills">
+        <mat-icon>info</mat-icon>
+        Enter or upload a job description and click "Extract Skills" to rate candidate skills.
+      </div>
+      }
+      <div style="margin-top: 20px">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px">
+          <span style="font-weight: 500; color: #374151">Overall Observation</span>
+          <button mat-stroked-button color="accent" type="button"
+            [disabled]="generatingSummary() || !skillGroups().length || !form.value.candidate_name?.trim()"
+            (click)="generateSummary()">
+            @if (generatingSummary()) {
+            <mat-spinner diameter="18" style="display:inline-block; margin-right:6px"></mat-spinner>
             }
-            @if (!submitting) {
-              <mat-icon>save</mat-icon>
+            @if (!generatingSummary()) {
+            <mat-icon>auto_awesome</mat-icon>
             }
-            {{submitting ? 'Saving...' : 'Save Assessment'}}
+            {{generatingSummary() ? 'Generating...' : 'Generate AI Summary'}}
           </button>
         </div>
-      </form>
-    </div>
+        <mat-form-field appearance="outline" style="width: 100%">
+          <textarea matInput formControlName="overall_observation" rows="5"
+            placeholder="Enter overall feedback about the candidate, or click 'Generate AI Summary' to auto-fill..."></textarea>
+        </mat-form-field>
+      </div>
+      <div style="margin-top: 16px; display: flex; gap: 12px">
+        <button mat-stroked-button type="button" (click)="reset()"><mat-icon>restart_alt</mat-icon> Reset</button>
+        <button mat-raised-button color="primary" type="submit"
+          [disabled]="form.invalid || !skillGroups().length || submitting()" style="height:48px">
+          @if (submitting()) {
+          <mat-spinner diameter="18"></mat-spinner>
+          }
+          @if (!submitting()) {
+          <mat-icon>save</mat-icon>
+          }
+          {{submitting() ? 'Saving...' : 'Save Assessment'}}
+        </button>
+      </div>
+    </form>
+  </div>
   }
 </div>
