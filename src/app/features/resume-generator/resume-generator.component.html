@@ -85,14 +85,23 @@
         <div class="section-title"><mat-icon>edit_note</mat-icon> Step 3: Review &amp; Edit</div>
         <p style="color:#64748b; margin-bottom:20px">Review and complete the extracted information before generating the resume.</p>
         <form [formGroup]="editForm">
-          <mat-expansion-panel expanded>
-            <mat-expansion-panel-header>
-              <mat-panel-title><mat-icon>person</mat-icon>&nbsp; Contact Information</mat-panel-title>
-            </mat-expansion-panel-header>
-            <div class="form-grid">
+          <mat-accordion class="review-panels" multi>
+            <mat-expansion-panel class="review-panel" expanded>
+              <mat-expansion-panel-header>
+                <mat-panel-title><mat-icon>person</mat-icon> Contact Information</mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="form-grid">
               <mat-form-field appearance="outline">
                 <mat-label>Full Name</mat-label>
-                <input matInput formControlName="name">
+                <input matInput formControlName="name" placeholder="Candidate full name">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>First Name</mat-label>
+                <input matInput formControlName="first_name">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Last Name</mat-label>
+                <input matInput formControlName="last_name">
               </mat-form-field>
               <mat-form-field appearance="outline">
                 <mat-label>Email</mat-label>
@@ -124,15 +133,19 @@
               </mat-form-field>
               <mat-form-field appearance="outline">
                 <mat-label>Interview Availability</mat-label>
-                <input matInput [matDatepicker]="interviewPicker" formControlName="interview_availability">
+                <input matInput [matDatepicker]="interviewPicker" [min]="minAvailabilityDate" formControlName="interview_availability">
                 <mat-datepicker-toggle matIconSuffix [for]="interviewPicker"></mat-datepicker-toggle>
                 <mat-datepicker #interviewPicker></mat-datepicker>
+                @if (editForm.get('interview_availability')?.hasError('futureDate')) { <mat-error>Enter a future date.</mat-error> }
+                @if (editForm.get('interview_availability')?.hasError('invalidDate')) { <mat-error>Enter a valid date.</mat-error> }
               </mat-form-field>
               <mat-form-field appearance="outline">
                 <mat-label>Start Availability</mat-label>
-                <input matInput [matDatepicker]="startPicker" formControlName="start_availability">
+                <input matInput [matDatepicker]="startPicker" [min]="minAvailabilityDate" formControlName="start_availability">
                 <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
                 <mat-datepicker #startPicker></mat-datepicker>
+                @if (editForm.get('start_availability')?.hasError('futureDate')) { <mat-error>Enter a future date.</mat-error> }
+                @if (editForm.get('start_availability')?.hasError('invalidDate')) { <mat-error>Enter a valid date.</mat-error> }
               </mat-form-field>
               <mat-form-field appearance="outline">
                 <mat-label>Total Experience (years)</mat-label>
@@ -160,24 +173,40 @@
                   <mat-option value="No">No</mat-option>
                 </mat-select>
               </mat-form-field>
-            </div>
-          </mat-expansion-panel>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title><mat-icon>work</mat-icon>&nbsp; Professional Details</mat-panel-title>
-            </mat-expansion-panel-header>
-            <div class="form-grid">
+              </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel class="review-panel">
+              <mat-expansion-panel-header>
+                <mat-panel-title><mat-icon>work</mat-icon> Professional Details</mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="form-grid">
+                <mat-form-field appearance="outline">
+                  <mat-label>Designation</mat-label>
+                  <input matInput formControlName="designation">
+                </mat-form-field>
+              </div>
               <mat-form-field appearance="outline">
-                <mat-label>Designation</mat-label>
-                <input matInput formControlName="designation">
+                <mat-label>Summary</mat-label>
+                <textarea matInput formControlName="summary" rows="4"></textarea>
               </mat-form-field>
-            </div>
-            <mat-form-field appearance="outline">
-              <mat-label>Summary</mat-label>
-              <textarea matInput formControlName="summary" rows="4"></textarea>
-            </mat-form-field>
-          </mat-expansion-panel>
-        </form>
+            </mat-expansion-panel>
+        </mat-accordion>
+        @if (editForm.get('education')?.value?.length) {
+          <div class="review-section" formArrayName="education">
+            <div class="section-title"><mat-icon>school</mat-icon> Education History</div>
+            <p class="review-hint">Review the education duration and replace TBD where the source resume did not provide dates.</p>
+            @for (edu of structuredResume?.education; track $index; let i = $index) {
+              <div class="education-review" [formGroupName]="i">
+                <div class="education-label"><strong>{{edu.degree}}</strong> — {{edu.field_of_study}} at {{edu.institution}}</div>
+                <div class="form-grid">
+                  <mat-form-field appearance="outline"><mat-label>Start of study</mat-label><input matInput formControlName="start_date"></mat-form-field>
+                  <mat-form-field appearance="outline"><mat-label>End of study</mat-label><input matInput formControlName="end_date"></mat-form-field>
+                  <mat-form-field appearance="outline"><mat-label>Graduation date</mat-label><input matInput formControlName="graduation_date"></mat-form-field>
+                </div>
+              </div>
+            }
+          </div>
+        }
         <!-- Skills preview -->
         @if (structuredResume?.skills?.length) {
           <div style="margin-top: 20px">
@@ -194,22 +223,33 @@
             }
           </div>
         }
-        @if (structuredResume?.relevant_skills?.length) {
+        @if (editForm) {
           <div style="margin-top: 20px">
             <div class="section-title"><mat-icon>star</mat-icon> Top 3 Relevant Skills</div>
-            <div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:6px">
-              @for (skill of structuredResume!.relevant_skills; track skill) {
-                <span class="skill-chip">{{skill}}</span>
-              }
+            <p style="color:#64748b; margin:0 0 10px">Adjust these skills before generating the resume. They must come from the candidate's resume.</p>
+            <div class="form-grid top-skills-grid" style="margin-top:6px">
+              <mat-form-field appearance="outline">
+                <mat-label>Relevant skill 1</mat-label>
+                <input matInput formControlName="relevant_skill_1">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Relevant skill 2</mat-label>
+                <input matInput formControlName="relevant_skill_2">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Relevant skill 3</mat-label>
+                <input matInput formControlName="relevant_skill_3">
+              </mat-form-field>
             </div>
           </div>
         }
         <div style="margin-top: 28px; display: flex; gap: 12px">
           <button mat-stroked-button (click)="reset()"><mat-icon>restart_alt</mat-icon> Start Over</button>
-          <button mat-raised-button color="primary" (click)="onGenerate()" style="height:48px; font-size:1rem; padding: 0 32px">
+          <button mat-raised-button color="primary" [disabled]="editForm.invalid" (click)="onGenerate()" style="height:48px; font-size:1rem; padding: 0 32px">
             <mat-icon>download</mat-icon> Generate &amp; Download Resume
           </button>
         </div>
+        </form>
       </div>
     }
     <!-- Step 3: Done -->

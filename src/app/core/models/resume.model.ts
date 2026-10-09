@@ -34,6 +34,8 @@ export interface Education {
   institution: string;
   degree: string;
   field_of_study: string;
+  start_date: string;
+  end_date: string;
   graduation_date: string;
   gpa?: string;
   achievements: string[];
@@ -72,6 +74,7 @@ export interface StructuredResume {
   career_summary: string[];
   relevant_skills: string[];
   experience: Experience[];
+  career_gaps?: string[];
   education: Education[];
   skills: Skill[];
   projects: Project[];

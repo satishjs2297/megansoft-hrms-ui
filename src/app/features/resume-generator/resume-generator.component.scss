@@ -29,6 +29,65 @@
   @media (max-width: 600px) { grid-template-columns: 1fr; }
 }
 
+.top-skills-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+
+  @media (max-width: 800px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.review-panels {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.review-section {
+  margin-top: 20px;
+  padding-top: 4px;
+}
+
+.review-hint {
+  color: #64748b;
+  margin: 0 0 12px;
+}
+
+.education-review {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 14px 16px 4px;
+  margin-bottom: 12px;
+}
+
+.education-label {
+  color: #334155;
+  margin-bottom: 10px;
+}
+
+.review-panel {
+  margin-bottom: 12px !important;
+  overflow: hidden;
+
+  .mat-expansion-panel-header {
+    cursor: pointer;
+    min-height: 48px;
+
+    &:hover {
+      background: var(--c-indigo-lt);
+    }
+  }
+
+  .mat-panel-title {
+    align-items: center;
+    gap: 8px;
+  }
+}
+
 .skill-chip {
   display: inline-block;
   background: #eff6ff;

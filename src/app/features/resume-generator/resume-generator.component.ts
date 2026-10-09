@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
-import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -57,6 +57,7 @@ export class ResumeGeneratorComponent implements OnInit {
   loadingMessage = '';
   generatedBlob: Blob | null = null;
   generatedFilename = '';
+  minAvailabilityDate = this.getTomorrow();
 
   editForm!: FormGroup;
 
@@ -75,7 +76,14 @@ export class ResumeGeneratorComponent implements OnInit {
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files?.length) {
-      this.selectedFile = input.files[0];
+      const file = input.files[0];
+      if (!/\.(pdf|docx|doc)$/i.test(file.name)) {
+        this.selectedFile = null;
+        input.value = '';
+        this.showError('Please upload a PDF, DOCX, or DOC resume.');
+        return;
+      }
+      this.selectedFile = file;
     }
   }
 
@@ -166,14 +174,16 @@ export class ResumeGeneratorComponent implements OnInit {
   buildEditForm(resume: StructuredResume) {
     this.editForm = this.fb.group({
       name: [resume.contact.name, Validators.required],
+      first_name: [resume.contact.first_name || this.getFirstName(resume.contact.name)],
+      last_name: [resume.contact.last_name || this.getLastName(resume.contact.name)],
       email: [resume.contact.email],
       phone: [resume.contact.phone || ''],
       location: [resume.contact.location || ''],
       linkedin: [resume.contact.linkedin || ''],
       notice_period: [resume.contact.notice_period || ''],
       candidate_type: [resume.contact.candidate_type || 'External'],
-      interview_availability: [resume.contact.interview_availability || ''],
-      start_availability: [resume.contact.start_availability || ''],
+      interview_availability: [resume.contact.interview_availability || '', this.futureDateValidator],
+      start_availability: [resume.contact.start_availability || '', this.futureDateValidator],
       total_experience_years: [resume.contact.total_experience_years || ''],
       relevant_experience_years: [resume.contact.relevant_experience_years || ''],
       hacker_rank_score: [resume.contact.hacker_rank_score || ''],
@@ -181,20 +191,44 @@ export class ResumeGeneratorComponent implements OnInit {
       worked_with_ford_agency_before: [resume.contact.worked_with_ford_agency_before || 'No'],
       designation: [resume.designation || ''],
       summary: [resume.summary || ''],
+      relevant_skill_1: [resume.relevant_skills?.[0] || ''],
+      relevant_skill_2: [resume.relevant_skills?.[1] || ''],
+      relevant_skill_3: [resume.relevant_skills?.[2] || ''],
+      education: this.fb.array((resume.education || []).map(edu => this.fb.group({
+        start_date: [edu.start_date || 'TBD'],
+        end_date: [edu.end_date || edu.graduation_date || 'TBD'],
+        graduation_date: [edu.graduation_date || 'TBD'],
+      }))),
     });
   }
 
   onGenerate() {
     if (!this.structuredResume || !this.editForm) return;
     const formVal = this.editForm.value;
+    const fullNameChanged = String(formVal.name || '').trim() !== String(this.structuredResume.contact.name || '').trim();
+    const derivedFirstName = this.getFirstName(formVal.name);
+    const derivedLastName = this.getLastName(formVal.name);
+    const firstName = fullNameChanged && !this.editForm.get('first_name')?.dirty
+      ? derivedFirstName : String(formVal.first_name || '').trim();
+    const lastName = fullNameChanged && !this.editForm.get('last_name')?.dirty
+      ? derivedLastName : String(formVal.last_name || '').trim();
     const updatedResume: StructuredResume = {
       ...this.structuredResume,
+      relevant_skills: this.getManualRelevantSkills(),
       designation: formVal.designation,
       summary: formVal.summary,
+      education: (this.editForm.get('education') as FormArray).controls.map((control, index) => ({
+        ...this.structuredResume!.education[index],
+        start_date: String(control.get('start_date')?.value || 'TBD').trim() || 'TBD',
+        end_date: String(control.get('end_date')?.value || 'TBD').trim() || 'TBD',
+        graduation_date: String(control.get('graduation_date')?.value || 'TBD').trim() || 'TBD',
+      })),
       candidate_photo_base64: this.candidatePhotoBase64 || undefined,
       contact: {
         ...this.structuredResume.contact,
         name: formVal.name,
+        first_name: firstName,
+        last_name: lastName,
         email: formVal.email,
         phone: formVal.phone,
         location: formVal.location,
@@ -216,7 +250,7 @@ export class ResumeGeneratorComponent implements OnInit {
     this.resumeService.generateResume(normalizedResume, this.selectedTemplate).subscribe({
       next: (blob) => {
         this.generatedBlob = blob;
-        this.generatedFilename = `${formVal.name.replace(' ', '_')}_resume.docx`;
+        this.generatedFilename = `${formVal.name.trim().replace(/\s+/g, '_') || 'resume'}_resume.docx`;
         this.loading = false;
         this.step = 3;
         this.autoDownload(blob, this.generatedFilename);
@@ -254,6 +288,45 @@ export class ResumeGeneratorComponent implements OnInit {
 
   private showError(msg: string) {
     this.snack.open(msg, 'Close', { duration: 5000, panelClass: 'error-snack' });
+  }
+
+  private getManualRelevantSkills(): string[] {
+    const skills = [
+      this.editForm.get('relevant_skill_1')?.value,
+      this.editForm.get('relevant_skill_2')?.value,
+      this.editForm.get('relevant_skill_3')?.value,
+    ]
+      .map(value => String(value || '').trim())
+      .filter(Boolean);
+    return [...new Set(skills)].slice(0, 3);
+  }
+
+  private getFirstName(value: unknown): string {
+    return String(value || '').trim().split(/\s+/)[0] || '';
+  }
+
+  private getTomorrow(): Date {
+    const tomorrow = new Date();
+    tomorrow.setHours(0, 0, 0, 0);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow;
+  }
+
+  private futureDateValidator = (control: AbstractControl): ValidationErrors | null => {
+    const value = String(control.value || '').trim();
+    if (!value) return null;
+    const match = /^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/.exec(value);
+    const date = match
+      ? new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]))
+      : new Date(value);
+    if (Number.isNaN(date.getTime())) return { invalidDate: true };
+    date.setHours(0, 0, 0, 0);
+    return date >= this.minAvailabilityDate ? null : { futureDate: true };
+  };
+
+  private getLastName(value: unknown): string {
+    const parts = String(value || '').trim().split(/\s+/).filter(Boolean);
+    return parts.slice(1).join(' ');
   }
 
   private normalizeResumeDates(resume: StructuredResume): StructuredResume {
